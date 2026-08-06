@@ -121,7 +121,12 @@
     display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden;
   }
   .card-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:2px}
-  .meta{font-size:11px;color:var(--dim);font-family:var(--mono)}
+  .meta{font-size:11px;color:var(--dim);font-family:var(--mono);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .badge-upd{
+    font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--muted);
+    background:var(--bg2);border:1px solid var(--border);
+    padding:2px 9px;border-radius:999px;white-space:nowrap;
+  }
   .card-actions{display:flex;gap:8px}
   .card-actions .btn{padding:7px 12px;font-size:12.5px}
   .empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:60px 0;font-size:14px}
@@ -443,7 +448,8 @@ function cardHtml(p){
                      :'<button class="btn badge-craft" style="padding:2px 8px;font-size:10.5px;cursor:default">стандарт</button>';
   const prev=fillVars(p.content||'').replace(/\s+/g,' ').trim().slice(0,240);
   const ver=p.versionCount||0;
-  const upd=p.updated?fmtDate(p.updated):'—';
+  const updBadge=p.updated?'<span class="badge-upd">🕓 '+fmtDate(p.updated)+'</span>':'';
+  const updv=ver?' · '+ver+' верс.':' · без истории';
   return ''+
   '<div class="card" data-name="'+esc(p.file)+'">'+
     '<div class="card-head">'+
@@ -456,7 +462,7 @@ function cardHtml(p){
     (p.description?'<div class="card-desc">'+esc(p.description)+'</div>':'')+
     (prev?'<div class="preview">'+esc(prev)+'…</div>':'')+
     '<div class="card-foot">'+
-      '<div class="meta">обновл. '+upd+(ver?' · '+ver+' верс.':' · без истории')+'</div>'+
+      '<div class="meta">'+updBadge+'<span>'+updv+'</span></div>'+
       '<div class="card-actions">'+
         '<button class="btn primary" data-act="copy">⧉ Копировать</button>'+
         '<button class="btn ghost" data-act="hist">История</button>'+
@@ -511,7 +517,7 @@ function openModal(p, tab){
   cur=p; curVersion=null; diffOn=false;
   document.getElementById('mTitle').textContent=p.title||p.file;
   document.getElementById('mFile').textContent=p.file;
-  document.getElementById('mVer').textContent='текущая версия';
+  document.getElementById('mVer').textContent='текущая версия'+(p.updated?' · '+fmtDate(p.updated):'');
   document.getElementById('mText').textContent=fillVars(p.content||'(пусто)');
   document.getElementById('mDiff').style.display='none';
   const fb=document.getElementById('mFb');
