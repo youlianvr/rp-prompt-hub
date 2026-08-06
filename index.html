@@ -641,7 +641,7 @@ render();
    referrerpolicy no-referrer: don't leak this page's URL to the service. */
 (function(){
   try{
-    const KEY='rp_hub_hit_ts', HOUR=3600000;
+    const KEY='rp_hub_hit_ts_v2', HOUR=3600000;
     const box=document.getElementById('visits');
     const img=document.getElementById('visitsImg');
     if(!box||!img) return;
@@ -653,7 +653,7 @@ render();
     };
     img.onerror=function(){ box.style.display='none'; };
     img.referrerPolicy='no-referrer';
-    img.src='https://hits.dwyl.com/TheWorldMachine/rp-prompt-hub.svg';
+    img.src='https://hits.dwyl.com/TheWorldMachine/rp-prompt-hub-community.svg';
   }catch(e){}
 })();
 </script>
