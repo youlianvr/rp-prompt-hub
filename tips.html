@@ -394,7 +394,6 @@
   <div class="foot-inner">
     <div class="foot-note">Советы по РП · practical tips for roleplay with AI</div>
     <span class="visits" id="visits" style="display:none" title="Посещений"><img id="visitsImg" alt="посещений" referrerpolicy="no-referrer"></span>
-    <button class="btn ghost" id="fbBtn2">💬 Написать в Telegram</button>
   </div>
 </footer>
 
@@ -403,7 +402,7 @@
   var TG='TheWorld_Machine';
   var base='https://t.me/'+TG+'?text=';
   var msg=encodeURIComponent('Привет! По поводу страницы «Советы по РП»: ');
-  ['fbBtn','fbBtn2'].forEach(function(id){
+  ['fbBtn'].forEach(function(id){
     var b=document.getElementById(id);
     if(b) b.onclick=function(){ window.open(base+msg,'_blank'); };
   });
