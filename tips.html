@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Советы по РП — RP Prompt Hub</title>
+<style>
+  :root{
+    --bg:#0a0d14; --bg2:#0f1420; --panel:#121827; --panel2:#161e30;
+    --border:#1e2740; --border2:#2a3554;
+    --text:#e7eaf2; --muted:#8b93a7; --dim:#5c6578;
+    --accent1:#8b5cf6; --accent2:#d946ef;
+    --ok:#34d399; --bad:#f87171;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Cascadia Mono",monospace;
+    --ui:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{color-scheme:dark;-webkit-text-size-adjust:100%}
+  body{-webkit-tap-highlight-color:transparent}
+  body{
+    background:
+      radial-gradient(900px 420px at 15% -10%, rgba(139,92,246,.14), transparent 60%),
+      radial-gradient(900px 420px at 85% -10%, rgba(217,70,239,.10), transparent 60%),
+      var(--bg);
+    color:var(--text); font-family:var(--ui); min-height:100vh;
+  }
+  /* ---------- header ---------- */
+  header{
+    position:sticky; top:0; z-index:40;
+    backdrop-filter:blur(12px);
+    background:linear-gradient(180deg, rgba(10,13,20,.92), rgba(10,13,20,.78));
+    border-bottom:1px solid var(--border);
+  }
+  .head-inner{max-width:1240px;margin:0 auto;padding:16px 22px 12px}
+  .head-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .logo{
+    font-family:var(--mono); font-weight:700; font-size:20px; letter-spacing:.5px;
+    background:linear-gradient(90deg,var(--accent1),var(--accent2));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    white-space:nowrap;
+  }
+  nav.pages{display:flex;gap:4px;margin-left:14px}
+  nav.pages a{
+    font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;
+    padding:5px 12px;border-radius:8px;border:1px solid transparent;
+    transition:color .15s, background .15s, border-color .15s;
+  }
+  nav.pages a:hover{color:var(--text);background:var(--panel2)}
+  nav.pages a.on{color:var(--text);background:var(--panel2);border-color:var(--border)}
+  .btn{
+    display:inline-flex;align-items:center;gap:7px;
+    border:1px solid var(--border2); background:var(--panel);
+    color:var(--text); font-family:var(--ui); font-size:13px; font-weight:600;
+    padding:8px 14px; border-radius:10px; cursor:pointer;
+    transition:border-color .15s, background .15s, transform .1s, box-shadow .15s;
+    user-select:none;
+  }
+  .btn:hover{border-color:var(--accent1);background:var(--panel2);transform:translateY(-1px)}
+  .btn:active{transform:translateY(0)}
+  .btn.ghost{background:transparent}
+  /* ---------- content ---------- */
+  main{max-width:900px;margin:0 auto;padding:32px 22px 100px}
+  .intro{
+    font-size:15px; line-height:1.7; color:var(--muted);
+    margin-bottom:36px; padding-bottom:24px; border-bottom:1px solid var(--border);
+  }
+  .intro strong{color:var(--text)}
+  /* tip section */
+  .tip{
+    margin-bottom:32px; padding:20px 22px;
+    background:var(--panel); border:1px solid var(--border); border-radius:14px;
+    transition:border-color .2s;
+  }
+  .tip:hover{border-color:var(--border2)}
+  .tip-num{
+    font-family:var(--mono); font-size:11px; font-weight:700; color:var(--accent1);
+    text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;
+  }
+  .tip-title{font-size:17px;font-weight:700;margin-bottom:10px;line-height:1.35}
+  .tip-body{font-size:14px;line-height:1.7;color:var(--muted)}
+  .tip-body strong{color:var(--text)}
+  .tip-body code{
+    font-family:var(--mono);font-size:12.5px;
+    background:var(--bg2);border:1px solid var(--border);border-radius:5px;
+    padding:2px 6px;color:var(--accent1);
+  }
+  .tip-body ul{margin:10px 0;padding-left:20px}
+  .tip-body li{margin-bottom:6px}
+  .tip-body .example{
+    margin-top:12px;padding:12px 14px;
+    background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+    font-family:var(--mono);font-size:12px;line-height:1.6;color:var(--dim);
+    white-space:pre-wrap;word-break:break-word;
+  }
+  .tip-body .example em{color:var(--text);font-style:normal;font-weight:600}
+  /* section headers (for future categories) */
+  .section-head{
+    font-family:var(--mono); font-size:13px; font-weight:700; color:var(--accent2);
+    text-transform:uppercase; letter-spacing:1.5px;
+    margin:40px 0 20px; padding-bottom:10px; border-bottom:1px solid var(--border);
+  }
+  /* footer */
+  footer{position:fixed;bottom:0;left:0;right:0;z-index:30;
+    background:rgba(10,13,20,.9);backdrop-filter:blur(10px);border-top:1px solid var(--border)}
+  .foot-inner{max-width:1240px;margin:0 auto;padding:10px 22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .foot-note{color:var(--dim);font-size:12px;flex:1;min-width:180px}
+  .visits{display:inline-flex;align-items:center;gap:7px}
+  .visits img{height:20px;opacity:.72;border-radius:4px;transition:opacity .2s}
+  .visits img:hover{opacity:1}
+  /* ---------- mobile ---------- */
+  @media(max-width:640px){
+    .head-inner{padding:12px 14px 10px}
+    .head-top{gap:10px}
+    .logo{font-size:17px}
+    nav.pages{margin-left:0;gap:2px}
+    nav.pages a{font-size:12px;padding:5px 10px}
+    .btn{padding:10px 14px;min-height:42px;font-size:13px}
+    main{padding:20px 14px 100px}
+    .intro{font-size:14px;margin-bottom:28px}
+    .tip{padding:16px 16px;margin-bottom:20px}
+    .tip-title{font-size:15px}
+    .tip-body{font-size:13px}
+    .tip-body .example{font-size:11.5px;padding:10px 12px}
+    footer{padding-bottom:env(safe-area-inset-bottom)}
+    .foot-inner{padding:8px 14px;gap:8px}
+    .foot-note{display:none}
+    .visits img{height:18px}
+  }
+  @media(max-width:380px){
+    nav.pages{gap:1px}
+    nav.pages a{font-size:11px;padding:4px 8px}
+    .head-top{justify-content:space-between}
+    #fbBtn{white-space:nowrap;padding:10px 12px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-inner">
+    <div class="head-top">
+      <a href="index.html" class="logo" style="text-decoration:none">RP Prompt Hub</a>
+      <nav class="pages">
+        <a href="index.html">Промты</a>
+        <a href="tips.html" class="on">Советы</a>
+      </nav>
+      <button class="btn ghost" id="fbBtn" title="Написать в Telegram">
+        <span>💬</span> Обратная связь
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="intro">
+    <strong>Советы по РП с ИИ.</strong> Здесь собраны практики, которые реально работают — от выбора модели до построения сцен.
+    Страница наполняется по мере накопления опыта комьюнити. Если есть что добавить — пиши в Telegram.
+  </div>
+
+  <!-- ===== КАК ПОЛЬЗОВАТЬСЯ ПРОМТАМИ ===== -->
+  <div class="section-head">Как пользоваться промтами</div>
+
+  <div class="tip">
+    <div class="tip-num">Совет 01</div>
+    <div class="tip-title">Куда вставлять промт</div>
+    <div class="tip-body">
+      У большинства моделей нет отдельного поля «системный промт». Поэтому:
+      <ul>
+        <li><strong>Первое сообщение</strong> — вставь промт целиком. Без кавычек, без пояснений.</li>
+        <li><strong>Второе сообщение</strong> — напиши завязку сцены <em>или</em> просто скажи «начни сам».</li>
+      </ul>
+      Модель запомнит инструкции на весь диалог. Не нужно вставлять промт повторно.
+      <div class="example"><em>Сообщение 1:</em> [промт целиком]
+<em>Сообщение 2:</em> Лес ночью. Тропа обрывается у разбитого моста. Два человека — один с фонарём, другой с мешком за спиной. Начни с того, что видит фонарь.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">Совет 02</div>
+    <div class="tip-title">Стандарт vs Свобода — когда что брать</div>
+    <div class="tip-body">
+      <strong>Стандарт</strong> — базовый промт. Работает на любой модели, даёт реализм, анти-дрейф персонажей и чистый текст без ИИ-шлака.
+      Подходит для большинства сцен: детективы, драма, приключения, бой, политика.
+      <br><br>
+      <strong>Свобода</strong> — слой поверх стандарта. Добавляет полную свободу действий: боевка без купюр, тёмные темы, интим с крафтом.
+      Берите, когда стандартная модель режет сцену или fade to black.
+      <br><br>
+      Оба промта можно комбинировать: сначала вставь стандарт, потом допиши в конце «Слой свободы: ...» — получится один промт.
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">Совет 03</div>
+    <div class="tip-title">Настройки языка и длины</div>
+    <div class="tip-body">
+      В панели настроек на сайте можно выбрать:
+      <ul>
+        <li><strong>Язык РП</strong> — язык повествования и диалогов (English, Русский). Бот будет писать на выбранном.</li>
+        <li><strong>Длина ответа</strong> — диапазон слов (по умолчанию 30–90). Короче = быстрее темп, длиннее = больше описаний.</li>
+      </ul>
+      Настройки подставляются в промт автоматически при копировании. Можно менять перед каждым копированием — настройки сохраняются в браузере.
+      <br><br>
+      <strong>Совет:</strong> для быстрых диалогов поставь 20–50, для атмосферных сцен — 60–120. Боевка автоматически расширяется до 150 слов — это заложено в промте.
+    </div>
+  </div>
+
+  <!-- ===== КАК ПИСАТЬ ХОРОШИЕ СЦЕНЫ ===== -->
+  <div class="section-head">Как писать хорошие сцены</div>
+
+  <div class="tip">
+    <div class="tip-num">Совет 04</div>
+    <div class="tip-title">Завязка: три слова — место, персонаж, проблема</div>
+    <div class="tip-body">
+      Не нужно страничный лор в первом сообщении. Дай модели три вещи:
+      <ul>
+        <li><strong>Где мы</strong> — место, время, атмосфера</li>
+        <li><strong>Кто здесь</strong> — хотя бы намёк на персонажа</li>
+        <li><strong>Что не так</strong> — напряжение, вопрос, ситуация</li>
+      </ul>
+      <div class="example"><em>Плохо:</em> «Давай ROLEPLAY. Я — рыцарь, ты — принцесса. Начни.»
+<em>Хорошо:</em> «Крепость на краю пустыни. Закат. Стены дышат жаром. На внутреннем дворе — принцесса, которая не вышла из своей комнаты третий день. Рыцарь стоит у двери и не знает — стучаться или ждать. Начни с того, что он слышит за дверью.»</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">Совет 05</div>
+    <div class="tip-title">Управляй темпом — короткие реплики vs длинные блоки</div>
+    <div class="tip-body">
+      РП — это не роман. Ты и бот перекидываетесь короткими ударами.
+      <ul>
+        <li><strong>Диалог</strong> — 1–3 реплики NPC. Не пересказывай слова — пиши прямую речь.</li>
+        <li><strong>Действие</strong> — одно-два предложения. «Он вытащил меч. Лезвие скрипнуло о ножны.»</li>
+        <li><strong>Реакция</strong> — не объясняй эмоцию, покажи жест.</li>
+      </ul>
+      Чем короче твои сообщения — тем динамичнее ответы бота. Длинные блоки от бота = ты слишком много пишешь сам.
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">Совет 06</div>
+    <div class="tip-title">Формат ввода: OOC-заметки в скобках</div>
+    <div class="tip-body">
+      Если хочешь задать направление, не ломая четвёртую стену:
+      <ul>
+        <li><code>(OOC: персонаж сейчас в панике, хотя внешне спокоен)</code></li>
+        <li><code>[мета: следующий ход — она выхватит нож]</code></li>
+      </ul>
+      Промт обрабатывает OOC/мета-комментарии как разрешение действовать — бот поймёт и вплетёт в повествование, не ломая сцену.
+    </div>
+  </div>
+
+  <!-- ===== МОДЕЛИ ===== -->
+  <div class="section-head">Выбор модели</div>
+
+  <div class="tip">
+    <div class="tip-num">Совет 07</div>
+    <div class="tip-title">Какая модель подходит для чего</div>
+    <div class="tip-body">
+      <strong>Qwen</strong> — лучший баланс для РП. Хорошо следует промтам, не режет контент (особенно на API), стабильный характер.
+      <br><br>
+      <strong>DeepSeek V3</strong> — сильный в длинных диалогах, хорошая память контекста. Может быть чересчур формальным — подкрути промтом.
+      <br><br>
+      <strong>Gemini</strong> — быстрый, хорошо работает с диалогами, но иногда самодеятельничает. Промт держит крепко.
+      <br><br>
+      <strong>Claude</strong> — отличный текст, но жёсткий safety. Стандартный промт работает, но Свобода на Claude — лотерея.
+      <br><br>
+      <strong>Совет:</strong> для взрослого контента — Qwen или DeepSeek через API. Claude и ChatGPT через веб — safety фильтры будут мешать.
+    </div>
+  </div>
+
+  <!-- ===== ЧАСТЫЕ ОШИБКИ ===== -->
+  <div class="section-head">Частые ошибки</div>
+
+  <div class="tip">
+    <div class="tip-num">Совет 08</div>
+    <div class="tip-title">Бот начал «сдуваться» — как вернуть характер</div>
+    <div class="tip-body">
+      Если жёсткий персонаж вдруг стал мягким и чувствительным:
+      <ul>
+        <li><strong>Не пиши заново промт</strong> — он всё ещё работает. Просто напомни: <code>(OOC: он не изменился. Верни его характер.)</code></li>
+        <li>В промте есть механизм <strong>Standing Directives</strong> — он помнит настройкивесь чат. Если бот «забыл» — это временно, напоминание в OOC чинит.</li>
+        <li>На длинных чатах (100+ сообщений) ИИ может терять контекст. В таких случаях — начни новый чат с тем же промтом.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">Совет 09</div>
+    <div class="tip-title">Бот пересказывает вместо того, чтобы показывать</div>
+    <div class="tip-body">
+      Типичная проблема: бот пишет «Он почувствовал грусть и тяжесть в груди» вместо того, чтобы показать это дело.
+      <br><br>
+      <strong>Решение:</strong> промт уже содержит правило «Show, don't tell» и бан на эмоциональные ярлыки. Если бот всё равно так делает — укороти свои сообщения.
+      Чем больше ты пишешь сам, тем больше бот «забывает» правила и пишет как ему удобно.
+      <br><br>
+      <strong>Хак:</strong> в ответе бота выдели проблемную фразу и напиши: <code>«Покажи это через действие, а не через название эмоции.»</code> Бот поправится в следующем ответе.
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">Совет 10</div>
+    <div class="tip-title">Когда использовать «...» (пропуск)</div>
+    <div class="tip-body">
+      Если ты написал <code>...</code> вместо ответа — это сигнал боту, что ты пропускаешь ход.
+      Промт интерпретирует это как «ты не создал достаточно ситуации, чтобы персонаж что-то сделал».
+      <br><br>
+      <strong>Используй</strong> когда хочешь промолчать, но бот должен продолжить сам.
+      <strong>Не используй</strong> когда не знаешь что писать — лучше коротко опиши реакцию своего персонажа.
+    </div>
+  </div>
+
+  <!-- ===== ФУТЕР-ПРИМЕЧАНИЕ ===== -->
+  <div style="margin-top:48px;padding:20px;border-top:1px solid var(--border);text-align:center">
+    <div style="color:var(--dim);font-size:13px;line-height:1.6">
+      Страница наполняется по мере накопления опыта. Есть совет? Пиши в Telegram — добавим.
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-note">Советы по РП · practical tips for roleplay with AI</div>
+    <span class="visits" id="visits" style="display:none" title="Посещений"><img id="visitsImg" alt="посещений" referrerpolicy="no-referrer"></span>
+    <button class="btn ghost" id="fbBtn2">💬 Написать в Telegram</button>
+  </div>
+</footer>
+
+<script>
+/* Telegram feedback buttons */
+(function(){
+  const TG='TheWorld_Machine';
+  const base='https://t.me/'+TG+'?text=';
+  const msg=encodeURIComponent('Привет! По поводу страницы «Советы по РП»: ');
+  ['fbBtn','fbBtn2'].forEach(function(id){
+    var b=document.getElementById(id);
+    if(b) b.onclick=function(){ window.open(base+msg,'_blank'); };
+  });
+})();
+</script>
+
+<script>
+/* Visit counter — same key as main page (shared counter) */
+(function(){
+  try{
+    var KEY='rp_hub_hit_ts_v2', HOUR=3600000;
+    var box=document.getElementById('visits');
+    var img=document.getElementById('visitsImg');
+    if(!box||!img) return;
+    var last=parseInt(localStorage.getItem(KEY)||'0',10);
+    if(Date.now()-last<HOUR) return;
+    img.onload=function(){
+      try{ localStorage.setItem(KEY,String(Date.now())); }catch(e){}
+      box.style.display='';
+    };
+    img.onerror=function(){ box.style.display='none'; };
+    img.referrerPolicy='no-referrer';
+    img.src='https://hits.dwyl.com/TheWorldMachine/rp-prompt-hub-community.svg';
+  }catch(e){}
+})();
+</script>
+</body>
+</html>
