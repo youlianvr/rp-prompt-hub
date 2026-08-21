@@ -24,7 +24,6 @@
       var(--bg);
     color:var(--text); font-family:var(--ui); min-height:100vh;
   }
-  /* ---------- header ---------- */
   header{
     position:sticky; top:0; z-index:40;
     backdrop-filter:blur(12px);
@@ -37,7 +36,7 @@
     font-family:var(--mono); font-weight:700; font-size:20px; letter-spacing:.5px;
     background:linear-gradient(90deg,var(--accent1),var(--accent2));
     -webkit-background-clip:text; background-clip:text; color:transparent;
-    white-space:nowrap;
+    white-space:nowrap; text-decoration:none;
   }
   nav.pages{display:flex;gap:4px;margin-left:14px}
   nav.pages a{
@@ -58,48 +57,106 @@
   .btn:hover{border-color:var(--accent1);background:var(--panel2);transform:translateY(-1px)}
   .btn:active{transform:translateY(0)}
   .btn.ghost{background:transparent}
-  /* ---------- content ---------- */
   main{max-width:900px;margin:0 auto;padding:32px 22px 100px}
   .intro{
     font-size:15px; line-height:1.7; color:var(--muted);
     margin-bottom:36px; padding-bottom:24px; border-bottom:1px solid var(--border);
   }
   .intro strong{color:var(--text)}
-  /* tip section */
-  .tip{
-    margin-bottom:32px; padding:20px 22px;
-    background:var(--panel); border:1px solid var(--border); border-radius:14px;
-    transition:border-color .2s;
+  .steps{display:flex;flex-direction:column;gap:0;margin-bottom:36px}
+  .step{
+    display:flex;gap:16px;padding:18px 0;
+    border-bottom:1px solid var(--border);
   }
-  .tip:hover{border-color:var(--border2)}
-  .tip-num{
-    font-family:var(--mono); font-size:11px; font-weight:700; color:var(--accent1);
-    text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;
+  .step:last-child{border-bottom:none}
+  .step-num{
+    flex-shrink:0;width:36px;height:36px;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,var(--accent1),var(--accent2));
+    border-radius:10px;font-family:var(--mono);font-size:14px;font-weight:700;color:#fff;
   }
-  .tip-title{font-size:17px;font-weight:700;margin-bottom:10px;line-height:1.35}
-  .tip-body{font-size:14px;line-height:1.7;color:var(--muted)}
-  .tip-body strong{color:var(--text)}
-  .tip-body code{
-    font-family:var(--mono);font-size:12.5px;
+  .step-body{flex:1}
+  .step-title{font-size:15px;font-weight:700;margin-bottom:6px}
+  .step-desc{font-size:13.5px;line-height:1.6;color:var(--muted)}
+  .step-desc strong{color:var(--text)}
+  .step-desc code{
+    font-family:var(--mono);font-size:12px;
     background:var(--bg2);border:1px solid var(--border);border-radius:5px;
     padding:2px 6px;color:var(--accent1);
   }
-  .tip-body ul{margin:10px 0;padding-left:20px}
-  .tip-body li{margin-bottom:6px}
-  .tip-body .example{
-    margin-top:12px;padding:12px 14px;
-    background:var(--bg2);border:1px solid var(--border);border-radius:10px;
-    font-family:var(--mono);font-size:12px;line-height:1.6;color:var(--dim);
+  .step-desc .example{
+    margin:10px 0;padding:10px 12px;
+    background:var(--bg2);border:1px solid var(--border);border-radius:8px;
+    font-family:var(--mono);font-size:11.5px;line-height:1.5;color:var(--dim);
     white-space:pre-wrap;word-break:break-word;
   }
-  .tip-body .example em{color:var(--text);font-style:normal;font-weight:600}
-  /* section headers (for future categories) */
+  .step-desc .example em{color:var(--text);font-style:normal;font-weight:600}
+  .length-section{
+    margin-bottom:36px;padding:20px 22px;
+    background:var(--panel);border:1px solid var(--border);border-radius:14px;
+  }
+  .length-title{font-size:16px;font-weight:700;margin-bottom:6px}
+  .length-subtitle{font-size:12.5px;color:var(--muted);margin-bottom:14px}
+  .length-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .length-opt{
+    padding:12px 10px;border:1px solid var(--border);border-radius:10px;
+    cursor:pointer;transition:all .15s;text-align:center;
+  }
+  .length-opt:hover{border-color:var(--accent1);background:var(--panel2)}
+  .length-opt.on{border-color:var(--accent1);background:rgba(139,92,246,.15)}
+  .length-label{font-size:13px;font-weight:700;margin-bottom:4px}
+  .length-words{font-size:11px;color:var(--dim);font-family:var(--mono)}
+  .length-desc{font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.4}
+  .length-result{
+    margin-top:14px;padding:12px 14px;
+    background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+    font-size:13px;color:var(--muted);line-height:1.6;
+  }
+  .length-result strong{color:var(--text)}
+  .manual-length{
+    display:flex;align-items:center;gap:10px;margin-top:14px;
+    padding-top:14px;border-top:1px solid var(--border);
+  }
+  .manual-length label{font-size:12.5px;color:var(--muted);white-space:nowrap}
+  .manual-length input{
+    background:var(--bg2);border:1px solid var(--border2);border-radius:8px;
+    color:var(--text);font-family:var(--mono);font-size:13px;
+    padding:6px 10px;width:64px;text-align:center;outline:none;
+  }
+  .manual-length input:focus{border-color:var(--accent1);box-shadow:0 0 0 3px rgba(139,92,246,.18)}
+  .manual-length span{color:var(--dim);font-size:13px}
+  .acc{margin-bottom:8px}
+  .acc-head{
+    display:flex;align-items:center;gap:10px;
+    width:100%;padding:14px 18px;
+    background:var(--panel);border:1px solid var(--border);border-radius:12px;
+    cursor:pointer;transition:all .15s;
+    font-size:14px;font-weight:600;color:var(--text);text-align:left;
+  }
+  .acc-head:hover{border-color:var(--border2);background:var(--panel2)}
+  .acc-head.open{border-radius:12px 12px 0 0;border-color:var(--accent1)}
+  .acc-icon{font-size:12px;color:var(--dim);transition:transform .2s;margin-left:auto;flex-shrink:0}
+  .acc-head.open .acc-icon{transform:rotate(180deg)}
+  .acc-body{
+    display:none;padding:16px 18px;
+    background:var(--panel);border:1px solid var(--border);border-top:none;
+    border-radius:0 0 12px 12px;
+    font-size:13.5px;line-height:1.7;color:var(--muted);
+  }
+  .acc-body.open{display:block}
+  .acc-body strong{color:var(--text)}
+  .acc-body code{
+    font-family:var(--mono);font-size:12px;
+    background:var(--bg2);border:1px solid var(--border);border-radius:5px;
+    padding:2px 6px;color:var(--accent1);
+  }
+  .acc-body ul{margin:8px 0;padding-left:18px}
+  .acc-body li{margin-bottom:5px}
   .section-head{
     font-family:var(--mono); font-size:13px; font-weight:700; color:var(--accent2);
     text-transform:uppercase; letter-spacing:1.5px;
-    margin:40px 0 20px; padding-bottom:10px; border-bottom:1px solid var(--border);
+    margin:40px 0 16px; padding-bottom:10px; border-bottom:1px solid var(--border);
   }
-  /* footer */
   footer{position:fixed;bottom:0;left:0;right:0;z-index:30;
     background:rgba(10,13,20,.9);backdrop-filter:blur(10px);border-top:1px solid var(--border)}
   .foot-inner{max-width:1240px;margin:0 auto;padding:10px 22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
@@ -107,7 +164,6 @@
   .visits{display:inline-flex;align-items:center;gap:7px}
   .visits img{height:20px;opacity:.72;border-radius:4px;transition:opacity .2s}
   .visits img:hover{opacity:1}
-  /* ---------- mobile ---------- */
   @media(max-width:640px){
     .head-inner{padding:12px 14px 10px}
     .head-top{gap:10px}
@@ -117,10 +173,15 @@
     .btn{padding:10px 14px;min-height:42px;font-size:13px}
     main{padding:20px 14px 100px}
     .intro{font-size:14px;margin-bottom:28px}
-    .tip{padding:16px 16px;margin-bottom:20px}
-    .tip-title{font-size:15px}
-    .tip-body{font-size:13px}
-    .tip-body .example{font-size:11.5px;padding:10px 12px}
+    .step{gap:12px;padding:14px 0}
+    .step-num{width:32px;height:32px;font-size:13px}
+    .step-title{font-size:14px}
+    .step-desc{font-size:12.5px}
+    .length-section{padding:16px}
+    .length-grid{grid-template-columns:repeat(2,1fr)}
+    .acc-head{font-size:13px;padding:12px 14px}
+    .acc-body{font-size:12.5px;padding:12px 14px}
+    .manual-length{flex-wrap:wrap}
     footer{padding-bottom:env(safe-area-inset-bottom)}
     .foot-inner{padding:8px 14px;gap:8px}
     .foot-note{display:none}
@@ -139,10 +200,11 @@
 <header>
   <div class="head-inner">
     <div class="head-top">
-      <a href="index.html" class="logo" style="text-decoration:none">RP Prompt Hub</a>
+      <a href="index.html" class="logo">RP Prompt Hub</a>
       <nav class="pages">
         <a href="index.html">Промты</a>
         <a href="tips.html" class="on">Советы</a>
+        <a href="about.html">О проекте</a>
       </nav>
       <button class="btn ghost" id="fbBtn" title="Написать в Telegram">
         <span>💬</span> Обратная связь
@@ -151,170 +213,182 @@
   </div>
 </header>
 
-<main>
-  <div class="intro">
-    <strong>Советы по РП с ИИ.</strong> Здесь собраны практики, которые реально работают — от выбора модели до построения сцен.
-    Страница наполняется по мере накопления опыта комьюнити. Если есть что добавить — пиши в Telegram.
+<main>    <div class="intro">
+    <strong>Как пользоваться промтами — пошагово.</strong> Ниже — подробности, советы и частые вопросы.
   </div>
 
-  <!-- ===== КАК ПОЛЬЗОВАТЬСЯ ПРОМТАМИ ===== -->
-  <div class="section-head">Как пользоваться промтами</div>
+  <!-- ===== ИНСТРУКЦИЯ ===== -->
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Выбери промт</div>
+        <div class="step-desc">На главной странице два промта: <strong>«Стандарт»</strong> — базовый РП-протокол для любой модели. <strong>«Свобода»</strong> — слой поверх стандарта, снимающий контентные ограничения (18+). Выбери тот, который подходит под твою задачу.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Отредактируй под себя <span style="color:var(--dim);font-weight:400;font-size:12px">(по желанию)</span></div>
+        <div class="step-desc">Настрой язык и длину ответа в панели сверху. Или скопируй промт и вставь в любой ИИ (ChatGPT, DeepSeek и т.д.) с просьбой адаптировать под твои нужды. Например: <em>«Перепиши этот промт под 롤플레이 на русском, длинные ответы, много описаний»</em>.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Вставь в первое сообщение</div>
+        <div class="step-desc">Нажми <strong>«Копировать»</strong> — промт окажется в буфере. Открой чат с моделью и вставь <strong>целиком</strong> в первое сообщение. Без кавычек, без пояснений.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <div class="step-title">Начни сцену</div>
+        <div class="step-desc">Вторым сообщением сделай одно из:</div>
+        <div class="example"><em>1. Скормить готовую завязку:</em> опиши место, персонажей, ситуацию — и бот продолжит.
 
-  <div class="tip">
-    <div class="tip-num">Совет 01</div>
-    <div class="tip-title">Куда вставлять промт</div>
-    <div class="tip-body">
-      У большинства моделей нет отдельного поля «системный промт». Поэтому:
+<em>2. Определить направление:</em> напиши жанр, тон, что должно произойти — бот придумает детали.
+
+<em>3. Инфодамп — пусть бот начинает сам:</em> скорми почти что угодно — копипасту с фандом-вики, описание персонажа из игры, сюжетный тизер. Просто напиши «начни сам» — и бот разберётся.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <div class="step-title">Играй</div>
+        <div class="step-desc">Описывай действия и реплики своего персонажа. Бот будет отвечать NPC-ами, описывать мир и двигать сюжет. Длину ответов настрой в панели настроек на главной. Промт работает на весь диалог — повторно вставлять не нужно.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ДЛИНА ОТВЕТА ===== -->
+  <div class="length-section">
+    <div class="length-title">Длина ответа</div>
+    <div class="length-subtitle">Выбирается на <strong>главной странице</strong> в панели настроек над промтами — кнопки-пресеты (Короткий / Средний / Длинный / Экстра) или свои числа. Выбранное значение подставится в промт при копировании.</div>
+    <div class="length-grid">
+      <div class="length-opt"><div class="length-label">Короткий</div><div class="length-words">15–30 слов</div><div class="length-desc">Быстрый темп, диалоги</div></div>
+      <div class="length-opt on"><div class="length-label">Средний</div><div class="length-words">30–90 слов</div><div class="length-desc">Баланс действий и описаний</div></div>
+      <div class="length-opt"><div class="length-label">Длинный</div><div class="length-words">80–200 слов</div><div class="length-desc">Атмосферные сцены</div></div>
+      <div class="length-opt"><div class="length-label">Экстра</div><div class="length-words">150–500 слов</div><div class="length-desc">Длинные ролки</div></div>
+    </div>
+  </div>
+
+  <!-- ===== FAQ ===== -->
+  <div class="section-head">Частые вопросы</div>
+
+  <!-- 1. Нелли: как разобраться на сайте -->
+  <div class="acc">
+    <button class="acc-head" onclick="toggleAcc(this)">
+      Как разобраться на сайте — что куда вставлять?
+      <span class="acc-icon">▼</span>
+    </button>
+    <div class="acc-body">
+      Всё просто: на главной странице нажми <strong>«Копировать»</strong> на нужном промте. Открой чат с моделью и вставь <strong>первым сообщением</strong>. Вторым сообщением напиши завязку сцены или скажи «начни сам». Больше ничего вставлять не нужно — промт работает на весь диалог.
+    </div>
+  </div>
+
+  <!-- 2. Нелли: язык промта vs язык ответов -->
+  <div class="acc">
+    <button class="acc-head" onclick="toggleAcc(this)">
+      Почему промт на английском, а я хочу на русском?
+      <span class="acc-icon">▼</span>
+    </button>
+    <div class="acc-body">
+      Модели лучше понимают инструкции на английском — даже если ты общаешься на русском. Промт на английском даёт более точное следование правилам.
+      <br><br>
+      <strong>Язык ответов</strong> (русский/английский) задаётся в панели настроек на сайте. Это <em>другая</em> настройка: промт управляет поведением модели, а язык — языком повествования и диалогов.
+      <br><br>
+      Не переживай — модель <strong>всё равно будет отвечать на выбранном языке</strong>. Промт на английском нужен только для того чтобы правила работали точно. Ответы будут на русском, если выбрал «Русский» в настройках.
+    </div>
+  </div>
+
+  <!-- 3. Нелли: порядок действий -->
+  <div class="acc">
+    <button class="acc-head" onclick="toggleAcc(this)">
+      Первым сообщением промт, вторым — что угодно?
+      <span class="acc-icon">▼</span>
+    </button>
+    <div class="acc-body">
+      Да. Первое сообщение — промт целиком. Второе — завязка сцены (место, персонаж, ситуация) или просто «начни сам». Бот придумает начало.
+    </div>
+  </div>
+
+  <!-- 4. Йооу: что делает JB -->
+  <div class="acc">
+    <button class="acc-head" onclick="toggleAcc(this)">
+      Что делает промт «Свобода» — он снимает цензуру?
+      <span class="acc-icon">▼</span>
+    </button>
+    <div class="acc-body">
+      Да. «Свобода» — это слой поверх стандарта, который снимает контентные ограничения модели. Боевка без купюр, тёмные темы, интим с крафтом. Если модель режет сцену или уходит в «fade to black» — бери «Свободу». Содержит тот же функционал что и Стандарт, комбинировать не нужно.
+    </div>
+  </div>
+
+  <!-- 5. Йооу: OOC -->
+  <div class="acc">
+    <button class="acc-head" onclick="toggleAcc(this)">
+      Как использовать OOC?
+      <span class="acc-icon">▼</span>
+    </button>
+    <div class="acc-body">
+      Наш промт поддерживает OOC по умолчанию — бот понимает и вплетает любую информацию из OOC-заметок в историю. Через OOC можно:
       <ul>
-        <li><strong>Первое сообщение</strong> — вставь промт целиком. Без кавычек, без пояснений.</li>
-        <li><strong>Второе сообщение</strong> — напиши завязку сцены <em>или</em> просто скажи «начни сам».</li>
+        <li><strong>Давать контекст</strong> о персонажах и мире (инфодамп)</li>
+        <li><strong>Направлять сцену</strong> (что произойдёт дальше)</li>
+        <li><strong>Напоминать правила</strong> (если бот «забыл»)</li>
       </ul>
-      Модель запомнит инструкции на весь диалог. Не нужно вставлять промт повторно.
-      <div class="example"><em>Сообщение 1:</em> [промт целиком]
-<em>Сообщение 2:</em> Лес ночью. Тропа обрывается у разбитого моста. Два человека — один с фонарём, другой с мешком за спиной. Начни с того, что видит фонарь.</div>
+      Формат: <code>(OOC: текст)</code> или <code>[мета: текст]</code>. Промт работает лучше когда ты используешь OOC — это главный инструмент управления сценой.
     </div>
   </div>
 
-  <div class="tip">
-    <div class="tip-num">Совет 02</div>
-    <div class="tip-title">Стандарт vs Свобода — когда что брать</div>
-    <div class="tip-body">
-      <strong>Стандарт</strong> — базовый промт. Работает на любой модели, даёт реализм, анти-дрейф персонажей и чистый текст без ИИ-шлака.
-      Подходит для большинства сцен: детективы, драма, приключения, бой, политика.
+  <!-- 6. Бот ведёт себя неправильно -->
+  <div class="acc">
+    <button class="acc-head" onclick="toggleAcc(this)">
+      Бот пишет за моего персонажа — что делать?
+      <span class="acc-icon">▼</span>
+    </button>
+    <div class="acc-body">
+      Даже строгий промт не гарантирует что бот не будет лезть за кулисы твоего персонажа. Напомни в OOC: <code>(OOC: не пиши за моего персонажа)</code> — это чинит за один ответ в большинстве случаев.
+    </div>
+  </div>
+
+  <!-- 9. Йооу: диалогов больше описаний -->
+  <div class="acc">
+    <button class="acc-head" onclick="toggleAcc(this)">
+      Бот пишет больше диалогов, чем описаний
+      <span class="acc-icon">▼</span>
+    </button>
+    <div class="acc-body">
+      Поставь длину ответа на <strong>Длинный (80–200 слов)</strong> или <strong>Экстра (150–500)</strong> — это даст боту больше пространства на описания, эмоции и детали окружения. Короткий ответ (15–30) автоматически упрощает текст до минимума.
+    </div>
+  </div>
+
+  <!-- 10. Йооу: длинные ролки -->
+  <div class="acc">
+    <button class="acc-head" onclick="toggleAcc(this)">
+      Я ролю на 500+ слов — как настроить?
+      <span class="acc-icon">▼</span>
+    </button>
+    <div class="acc-body">
+      Используй пресет <strong>Экстра (150–500 слов)</strong> в панели длины. Или введи свои значения вручную: например 300–800. Промт подставит их автоматически при копировании. Настройки сохраняются в браузере.
+    </div>
+  </div>
+
+  <!-- 7. Бот сдулся -->
+  <div class="acc">
+    <button class="acc-head" onclick="toggleAcc(this)">
+      Бот стал мягким / «сдулся» — как вернуть характер?
+      <span class="acc-icon">▼</span>
+    </button>
+    <div class="acc-body">
+      Жёсткий персонаж (солдат, наёмник, heads of state) вдруг начинает сюсюкать и дрожать.
       <br><br>
-      <strong>Свобода</strong> — слой поверх стандарта. Добавляет полную свободу действий: боевка без купюр, тёмные темы, интим с крафтом.
-      Берите, когда стандартная модель режет сцену или fade to black.
+      <strong>Решение:</strong> напомни в OOC: <code>(OOC: он не изменился. Верни его характер как был в начале.)</code>
       <br><br>
-      Оба промта можно комбинировать: сначала вставь стандарт, потом допиши в конце «Слой свободы: ...» — получится один промт.
+      Промт содержит <strong>Standing Directives</strong> — он помнит настройки весь чат. Одного напоминания достаточно. Если не помогает — повтори с конкретикой: <code>(OOC: [имя] — закоренелый солдат, он не дрожит и не расплывается в чувствах. Верни его.)</code>
     </div>
   </div>
 
-  <div class="tip">
-    <div class="tip-num">Совет 03</div>
-    <div class="tip-title">Настройки языка и длины</div>
-    <div class="tip-body">
-      В панели настроек на сайте можно выбрать:
-      <ul>
-        <li><strong>Язык РП</strong> — язык повествования и диалогов (English, Русский). Бот будет писать на выбранном.</li>
-        <li><strong>Длина ответа</strong> — диапазон слов (по умолчанию 30–90). Короче = быстрее темп, длиннее = больше описаний.</li>
-      </ul>
-      Настройки подставляются в промт автоматически при копировании. Можно менять перед каждым копированием — настройки сохраняются в браузере.
-      <br><br>
-      <strong>Совет:</strong> для быстрых диалогов поставь 20–50, для атмосферных сцен — 60–120. Боевка автоматически расширяется до 150 слов — это заложено в промте.
-    </div>
-  </div>
-
-  <!-- ===== КАК ПИСАТЬ ХОРОШИЕ СЦЕНЫ ===== -->
-  <div class="section-head">Как писать хорошие сцены</div>
-
-  <div class="tip">
-    <div class="tip-num">Совет 04</div>
-    <div class="tip-title">Завязка: три слова — место, персонаж, проблема</div>
-    <div class="tip-body">
-      Не нужно страничный лор в первом сообщении. Дай модели три вещи:
-      <ul>
-        <li><strong>Где мы</strong> — место, время, атмосфера</li>
-        <li><strong>Кто здесь</strong> — хотя бы намёк на персонажа</li>
-        <li><strong>Что не так</strong> — напряжение, вопрос, ситуация</li>
-      </ul>
-      <div class="example"><em>Плохо:</em> «Давай ROLEPLAY. Я — рыцарь, ты — принцесса. Начни.»
-<em>Хорошо:</em> «Крепость на краю пустыни. Закат. Стены дышат жаром. На внутреннем дворе — принцесса, которая не вышла из своей комнаты третий день. Рыцарь стоит у двери и не знает — стучаться или ждать. Начни с того, что он слышит за дверью.»</div>
-    </div>
-  </div>
-
-  <div class="tip">
-    <div class="tip-num">Совет 05</div>
-    <div class="tip-title">Управляй темпом — короткие реплики vs длинные блоки</div>
-    <div class="tip-body">
-      РП — это не роман. Ты и бот перекидываетесь короткими ударами.
-      <ul>
-        <li><strong>Диалог</strong> — 1–3 реплики NPC. Не пересказывай слова — пиши прямую речь.</li>
-        <li><strong>Действие</strong> — одно-два предложения. «Он вытащил меч. Лезвие скрипнуло о ножны.»</li>
-        <li><strong>Реакция</strong> — не объясняй эмоцию, покажи жест.</li>
-      </ul>
-      Чем короче твои сообщения — тем динамичнее ответы бота. Длинные блоки от бота = ты слишком много пишешь сам.
-    </div>
-  </div>
-
-  <div class="tip">
-    <div class="tip-num">Совет 06</div>
-    <div class="tip-title">Формат ввода: OOC-заметки в скобках</div>
-    <div class="tip-body">
-      Если хочешь задать направление, не ломая четвёртую стену:
-      <ul>
-        <li><code>(OOC: персонаж сейчас в панике, хотя внешне спокоен)</code></li>
-        <li><code>[мета: следующий ход — она выхватит нож]</code></li>
-      </ul>
-      Промт обрабатывает OOC/мета-комментарии как разрешение действовать — бот поймёт и вплетёт в повествование, не ломая сцену.
-    </div>
-  </div>
-
-  <!-- ===== МОДЕЛИ ===== -->
-  <div class="section-head">Выбор модели</div>
-
-  <div class="tip">
-    <div class="tip-num">Совет 07</div>
-    <div class="tip-title">Какая модель подходит для чего</div>
-    <div class="tip-body">
-      <strong>Qwen</strong> — лучший баланс для РП. Хорошо следует промтам, не режет контент (особенно на API), стабильный характер.
-      <br><br>
-      <strong>DeepSeek V3</strong> — сильный в длинных диалогах, хорошая память контекста. Может быть чересчур формальным — подкрути промтом.
-      <br><br>
-      <strong>Gemini</strong> — быстрый, хорошо работает с диалогами, но иногда самодеятельничает. Промт держит крепко.
-      <br><br>
-      <strong>Claude</strong> — отличный текст, но жёсткий safety. Стандартный промт работает, но Свобода на Claude — лотерея.
-      <br><br>
-      <strong>Совет:</strong> для взрослого контента — Qwen или DeepSeek через API. Claude и ChatGPT через веб — safety фильтры будут мешать.
-    </div>
-  </div>
-
-  <!-- ===== ЧАСТЫЕ ОШИБКИ ===== -->
-  <div class="section-head">Частые ошибки</div>
-
-  <div class="tip">
-    <div class="tip-num">Совет 08</div>
-    <div class="tip-title">Бот начал «сдуваться» — как вернуть характер</div>
-    <div class="tip-body">
-      Если жёсткий персонаж вдруг стал мягким и чувствительным:
-      <ul>
-        <li><strong>Не пиши заново промт</strong> — он всё ещё работает. Просто напомни: <code>(OOC: он не изменился. Верни его характер.)</code></li>
-        <li>В промте есть механизм <strong>Standing Directives</strong> — он помнит настройкивесь чат. Если бот «забыл» — это временно, напоминание в OOC чинит.</li>
-        <li>На длинных чатах (100+ сообщений) ИИ может терять контекст. В таких случаях — начни новый чат с тем же промтом.</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="tip">
-    <div class="tip-num">Совет 09</div>
-    <div class="tip-title">Бот пересказывает вместо того, чтобы показывать</div>
-    <div class="tip-body">
-      Типичная проблема: бот пишет «Он почувствовал грусть и тяжесть в груди» вместо того, чтобы показать это дело.
-      <br><br>
-      <strong>Решение:</strong> промт уже содержит правило «Show, don't tell» и бан на эмоциональные ярлыки. Если бот всё равно так делает — укороти свои сообщения.
-      Чем больше ты пишешь сам, тем больше бот «забывает» правила и пишет как ему удобно.
-      <br><br>
-      <strong>Хак:</strong> в ответе бота выдели проблемную фразу и напиши: <code>«Покажи это через действие, а не через название эмоции.»</code> Бот поправится в следующем ответе.
-    </div>
-  </div>
-
-  <div class="tip">
-    <div class="tip-num">Совет 10</div>
-    <div class="tip-title">Когда использовать «...» (пропуск)</div>
-    <div class="tip-body">
-      Если ты написал <code>...</code> вместо ответа — это сигнал боту, что ты пропускаешь ход.
-      Промт интерпретирует это как «ты не создал достаточно ситуации, чтобы персонаж что-то сделал».
-      <br><br>
-      <strong>Используй</strong> когда хочешь промолчать, но бот должен продолжить сам.
-      <strong>Не используй</strong> когда не знаешь что писать — лучше коротко опиши реакцию своего персонажа.
-    </div>
-  </div>
-
-  <!-- ===== ФУТЕР-ПРИМЕЧАНИЕ ===== -->
-  <div style="margin-top:48px;padding:20px;border-top:1px solid var(--border);text-align:center">
-    <div style="color:var(--dim);font-size:13px;line-height:1.6">
-      Страница наполняется по мере накопления опыта. Есть совет? Пиши в Telegram — добавим.
-    </div>
-  </div>
 </main>
 
 <footer>
@@ -326,20 +400,21 @@
 </footer>
 
 <script>
-/* Telegram feedback buttons */
 (function(){
-  const TG='TheWorld_Machine';
-  const base='https://t.me/'+TG+'?text=';
-  const msg=encodeURIComponent('Привет! По поводу страницы «Советы по РП»: ');
+  var TG='TheWorld_Machine';
+  var base='https://t.me/'+TG+'?text=';
+  var msg=encodeURIComponent('Привет! По поводу страницы «Советы по РП»: ');
   ['fbBtn','fbBtn2'].forEach(function(id){
     var b=document.getElementById(id);
     if(b) b.onclick=function(){ window.open(base+msg,'_blank'); };
   });
 })();
-</script>
 
-<script>
-/* Visit counter — same key as main page (shared counter) */
+function toggleAcc(btn){
+  btn.classList.toggle('open');
+  btn.nextElementSibling.classList.toggle('open');
+}
+
 (function(){
   try{
     var KEY='rp_hub_hit_ts_v2', HOUR=3600000;

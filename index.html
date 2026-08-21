@@ -68,20 +68,43 @@
   .btn.copied{background:var(--ok);border-color:var(--ok);color:#04211a}
   .btn.badge-jb{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.4);color:var(--bad)}
   .btn.badge-craft{background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.4);color:var(--ok)}
-  /* ---------- settings bar ---------- */
+  /* ---------- settings bar (collapsible) ---------- */
   .settings{
-    display:flex; align-items:center; gap:12px; flex-wrap:wrap;
-    margin-top:10px; padding:10px 14px;
+    margin-top:10px; padding:0;
     background:var(--panel); border:1px solid var(--border); border-radius:12px;
+    overflow:hidden;
   }
+  .settings-head{
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    padding:10px 14px; cursor:pointer; user-select:none;
+  }
+  .settings-head-l{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .settings-ico{font-size:14px}
+  .settings-lbl{font-size:13px;font-weight:600;color:var(--text)}
+  .settings-summary{font-size:12px;color:var(--dim);font-family:var(--mono)}
+  .settings-chev{color:var(--dim);font-size:12px;transition:transform .2s;flex-shrink:0}
+  .settings.open .settings-chev{transform:rotate(180deg)}
+  .settings-body{
+    display:none; align-items:center; gap:12px; flex-wrap:wrap;
+    padding:10px 14px 12px; border-top:1px solid var(--border);
+  }
+  .settings.open .settings-body{display:flex}
   .set-field{display:flex;align-items:center;gap:7px}
   .set-field label{font-size:12.5px;color:var(--muted)}
+  .len-presets{display:flex;gap:4px}
+  .len-chip{
+    font-size:11.5px;font-weight:600;color:var(--muted);cursor:pointer;
+    background:var(--bg2);border:1px solid var(--border2);border-radius:999px;
+    padding:5px 11px;transition:all .15s;user-select:none;
+  }
+  .len-chip:hover{border-color:var(--accent1);color:var(--text)}
+  .len-chip.on{background:rgba(139,92,246,.18);border-color:var(--accent1);color:#fff}
   select.num, input.num{
     background:var(--bg2); border:1px solid var(--border2); border-radius:8px;
     color:var(--text); font-family:var(--mono); font-size:13px;
     padding:6px 10px; outline:none; transition:border-color .15s, box-shadow .15s;
   }
-  input.num{width:72px}
+  input.num{width:64px}
   select.num:focus, input.num:focus{border-color:var(--accent1);box-shadow:0 0 0 3px rgba(139,92,246,.18)}
   /* ---------- grid ---------- */
   main{max-width:1240px;margin:0 auto;padding:24px 22px 90px}
@@ -118,6 +141,23 @@
   .card-actions{display:flex;gap:8px}
   .card-actions .btn{padding:7px 12px;font-size:12.5px}
   .empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:60px 0;font-size:14px}
+  /* reveal on scroll */
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .5s ease, transform .5s ease}
+  .reveal.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1;transform:none;transition:none}
+  }
+  /* tips hint banner */
+  .tips-hint{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    margin-bottom:16px; padding:11px 16px;
+    background:var(--panel); border:1px solid var(--border); border-radius:12px;
+    font-size:13.5px; color:var(--muted);
+  }
+  .tips-hint a{color:var(--accent1);font-weight:700;text-decoration:none;white-space:nowrap}
+  .tips-hint a:hover{text-decoration:underline}
+  .tips-hint .close{margin-left:auto;background:none;border:none;color:var(--dim);cursor:pointer;font-size:15px;line-height:1;padding:2px 4px}
+  .tips-hint .close:hover{color:var(--text)}
   /* ---------- modal ---------- */
   .overlay{
     position:fixed; inset:0; z-index:60; display:none; align-items:center; justify-content:center;
@@ -183,6 +223,15 @@
     background:rgba(10,13,20,.9);backdrop-filter:blur(10px);border-top:1px solid var(--border)}
   .foot-inner{max-width:1240px;margin:0 auto;padding:10px 22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
   .foot-note{color:var(--dim);font-size:12px;flex:1;min-width:180px}
+  .dev{
+    display:inline-flex; align-items:center; gap:8px;
+    text-decoration:none; color:var(--muted);
+    padding:4px 10px; border-radius:10px; border:1px solid var(--border); background:var(--panel);
+    transition:all .15s;
+  }
+  .dev:hover{color:var(--text);border-color:var(--accent1);background:var(--panel2)}
+  .dev img{width:26px;height:26px;border-radius:50%;object-fit:cover;border:1px solid var(--border2)}
+  .dev span{font-size:12px;font-weight:600;white-space:nowrap}
   /* visit counter (unobtrusive, footer) */
   .visits{display:inline-flex;align-items:center;gap:7px}
   .visits img{height:20px;opacity:.72;border-radius:4px;transition:opacity .2s}
@@ -196,12 +245,15 @@
     nav.pages a{font-size:12px;padding:5px 10px}
     .subtitle{font-size:11.5px;min-width:0}
     .btn{padding:10px 14px;min-height:42px;font-size:13px}
-    .settings{
-      flex-direction:column;align-items:stretch;gap:9px;
-      margin-top:8px;padding:12px;
-    }
+    .settings{margin-top:8px}
+    .settings-head{padding:12px 12px}
+    .settings-lbl{font-size:12.5px}
+    .settings-summary{font-size:11.5px}
+    .settings-body{flex-direction:column;align-items:stretch;gap:9px;padding:12px}
     .set-field{flex-wrap:wrap}
     .set-field label{font-size:12px;flex-basis:100%}
+    .len-presets{flex-wrap:wrap}
+    .len-chip{flex:1;min-width:70px;justify-content:center;text-align:center;padding:9px 8px;font-size:12.5px}
     select.num, input.num{flex:1;min-width:0;font-size:15px;padding:9px 12px}
     input.num{width:auto}
     main{padding:16px 14px 110px}
@@ -240,6 +292,8 @@
     .foot-inner{padding:8px 14px;gap:8px}
     .foot-note{display:none}
     .visits img{height:18px}
+    .dev span{font-size:11.5px}
+    .dev img{width:24px;height:24px}
     /* toast above home indicator */
     .toast{bottom:calc(20px + env(safe-area-inset-bottom));font-size:13px;max-width:92vw;text-align:center}
     .empty{padding:40px 0;font-size:13px}
@@ -263,31 +317,54 @@
       <nav class="pages">
         <a href="index.html" class="on">Промты</a>
         <a href="tips.html">Советы</a>
+        <a href="about.html">О проекте</a>
       </nav>
       <button class="btn ghost" id="fbBtn" title="Написать в Telegram">
         <span>💬</span> Обратная связь
       </button>
     </div>
     <div class="settings" id="settingsBar">
-      <div class="set-field">
-        <label for="cfgLang">Язык РП</label>
-        <select class="num" id="cfgLang">
-          <option value="English">English</option>
-          <option value="Russian">Русский</option>
-        </select>
+      <div class="settings-head" id="settingsToggle" role="button" tabindex="0" aria-expanded="false">
+        <div class="settings-head-l">
+          <span class="settings-ico">⚙</span>
+          <span class="settings-lbl">Настройки промпта</span>
+          <span class="settings-summary" id="settingsSummary"></span>
+        </div>
+        <span class="settings-chev">▾</span>
       </div>
-      <div class="set-field">
-        <label for="cfgMin">Длина ответа</label>
-        <input class="num" id="cfgMin" type="number" min="1" max="500" value="30" title="минимум слов">
-        <span style="color:var(--dim)">—</span>
-        <input class="num" id="cfgMax" type="number" min="1" max="1000" value="90" title="максимум слов">
-        <span style="color:var(--dim)">слов</span>
+      <div class="settings-body">
+        <div class="set-field">
+          <label for="cfgLang">Язык РП</label>
+          <select class="num" id="cfgLang">
+            <option value="English">English</option>
+            <option value="Russian">Русский</option>
+          </select>
+        </div>
+        <div class="set-field" style="flex-wrap:wrap">
+          <label for="cfgMin">Длина ответа</label>
+          <div class="len-presets" id="lenPresets">
+            <button type="button" class="len-chip" data-min="15" data-max="30">Короткий</button>
+            <button type="button" class="len-chip on" data-min="30" data-max="90">Средний</button>
+            <button type="button" class="len-chip" data-min="80" data-max="200">Длинный</button>
+            <button type="button" class="len-chip" data-min="150" data-max="500">Экстра</button>
+          </div>
+          <input class="num" id="cfgMin" type="number" min="1" max="500" value="30" title="минимум слов">
+          <span style="color:var(--dim)">—</span>
+          <input class="num" id="cfgMax" type="number" min="1" max="1000" value="90" title="максимум слов">
+          <span style="color:var(--dim)">слов</span>
+        </div>
       </div>
     </div>
   </div>
 </header>
 
 <main>
+  <div class="tips-hint" id="tipsHint">
+    <span>🆕</span>
+    <span>Впервые здесь? Как начать, настройка длины и частые вопросы —</span>
+    <a href="tips.html">в Советах →</a>
+    <button class="close" id="tipsHintClose" aria-label="Скрыть">✕</button>
+  </div>
   <div class="grid" id="grid"></div>
 </main>
 
@@ -296,7 +373,10 @@
     <div class="foot-note">Коллекция РП-промптов для комьюнити · нажми «Копировать» — текст сразу в буфере</div>
     <span class="visits" id="visits" style="display:none" title="Посещений"><img id="visitsImg" alt="посещений" referrerpolicy="no-referrer"></span>
     <span class="count" id="footCount"></span>
-    <button class="btn ghost" id="fbBtn2">💬 Написать в Telegram</button>
+    <a class="dev" href="about.html" title="О разработчике">
+      <img src="avatar.jpg" alt="Niko OneShot">
+      <span>Niko OneShot · @TheWorld_Machine</span>
+    </a>
   </div>
 </footer>
 
@@ -347,10 +427,8 @@ function tgLink(text){
   return base + '?text=' + encodeURIComponent(text);
 }
 function setFbButtons(){
-  ['fbBtn','fbBtn2'].forEach(id=>{
-    const b=document.getElementById(id);
-    b.onclick=()=>openUrl(tgLink('Привет! По поводу RP Prompt Hub: '));
-  });
+  const b=document.getElementById('fbBtn');
+  if(b) b.onclick=()=>openUrl(tgLink('Привет! По поводу RP Prompt Hub: '));
 }
 function openUrl(u){ window.open(u,'_blank'); }
 function esc(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
@@ -358,6 +436,17 @@ function esc(s){ const d=document.createElement('div'); d.textContent=s; return 
 /* ================= PROMPT VARIABLES ================= */
 const DEF = { lang:'English', min:30, max:90 };
 let cfg = Object.assign({}, DEF);
+const LEN_PRESETS=[[15,30],[30,90],[80,200],[150,500]];
+function syncLenChips(){
+  const chips=document.querySelectorAll('#lenPresets .len-chip');
+  let matched=false;
+  chips.forEach(ch=>{
+    const hit=parseInt(ch.dataset.min,10)===cfg.min&&parseInt(ch.dataset.max,10)===cfg.max;
+    ch.classList.toggle('on',hit);
+    if(hit) matched=true;
+  });
+  return matched;
+}
 function loadCfg(){
   try{
     const raw=localStorage.getItem('rp_hub_cfg');
@@ -366,10 +455,35 @@ function loadCfg(){
   document.getElementById('cfgLang').value=cfg.lang;
   document.getElementById('cfgMin').value=cfg.min;
   document.getElementById('cfgMax').value=cfg.max;
+  syncLenChips();
+  updateSettingsSummary();
 }
 function saveCfg(){
   try{ localStorage.setItem('rp_hub_cfg', JSON.stringify(cfg)); }catch(e){}
 }
+function updateSettingsSummary(){
+  const el=document.getElementById('settingsSummary');
+  if(el) el.textContent=cfg.lang+' · '+cfg.min+'–'+cfg.max+' слов';
+}
+(function(){
+  const bar=document.getElementById('settingsBar');
+  const tgl=document.getElementById('settingsToggle');
+  if(!bar||!tgl) return;
+  let saved=null; try{ saved=localStorage.getItem('rp_hub_cfg_open'); }catch(e){}
+  const isMobile=window.matchMedia('(max-width:640px)').matches;
+  let open = saved===null ? !isMobile : saved==='1';
+  function apply(){
+    bar.classList.toggle('open',open);
+    tgl.setAttribute('aria-expanded',String(open));
+  }
+  tgl.addEventListener('click',()=>{
+    open=!open;
+    try{ localStorage.setItem('rp_hub_cfg_open',open?'1':'0'); }catch(e){}
+    apply();
+  });
+  tgl.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); tgl.click(); } });
+  apply();
+})();
 function fillVars(t){
   if(!t) return t;
   return t.replace(/\{\{lang\}\}/g, cfg.lang)
@@ -379,17 +493,28 @@ function fillVars(t){
 document.getElementById('cfgLang').addEventListener('change',e=>{
   cfg.lang=e.target.value; saveCfg(); render();
 });
+function setLen(min,max){
+  cfg.min=min; cfg.max=max;
+  document.getElementById('cfgMin').value=min;
+  document.getElementById('cfgMax').value=max;
+  syncLenChips(); updateSettingsSummary(); saveCfg(); render();
+}
+document.getElementById('lenPresets').addEventListener('click',e=>{
+  const ch=e.target.closest('.len-chip');
+  if(!ch) return;
+  setLen(parseInt(ch.dataset.min,10),parseInt(ch.dataset.max,10));
+});
 document.getElementById('cfgMin').addEventListener('change',e=>{
   let v=parseInt(e.target.value,10);
   if(isNaN(v)||v<1) v=DEF.min;
   if(v>=(parseInt(document.getElementById('cfgMax').value,10)||DEF.max)) v=DEF.min;
-  cfg.min=v; e.target.value=v; saveCfg(); render();
+  cfg.min=v; e.target.value=v; syncLenChips(); updateSettingsSummary(); saveCfg(); render();
 });
 document.getElementById('cfgMax').addEventListener('change',e=>{
   let v=parseInt(e.target.value,10);
   if(isNaN(v)||v<1) v=DEF.max;
   if(v<=(parseInt(document.getElementById('cfgMin').value,10)||DEF.min)) v=DEF.max;
-  cfg.max=v; e.target.value=v; saveCfg(); render();
+  cfg.max=v; e.target.value=v; syncLenChips(); updateSettingsSummary(); saveCfg(); render();
 });
 function fmtDate(iso){
   if(!iso) return '';
@@ -478,7 +603,38 @@ function render(){
       :'<div class="empty">Пока пусто — коллекция наполняется, загляни позже</div>';
   }
   document.getElementById('footCount').textContent=PROMPTS.length?(list.length+' / '+PROMPTS.length):'0';
+  observeCards();
 }
+
+/* ================= REVEAL ON SCROLL ================= */
+const revealIO = ('IntersectionObserver' in window)
+  ? new IntersectionObserver(entries=>{
+      entries.forEach(en=>{
+        if(en.isIntersecting){ en.target.classList.add('in'); revealIO.unobserve(en.target); }
+      });
+    },{ threshold:.08, rootMargin:'0px 0px -40px 0px' })
+  : null;
+function observeCards(){
+  const cards=document.querySelectorAll('.card');
+  cards.forEach((c,i)=>{
+    c.classList.add('reveal');
+    c.style.transitionDelay=((i%4)*70)+'ms';
+    if(revealIO) revealIO.observe(c); else c.classList.add('in');
+  });
+}
+
+/* ================= TIPS HINT ================= */
+(function(){
+  const hint=document.getElementById('tipsHint');
+  if(!hint) return;
+  let hidden=null; try{ hidden=localStorage.getItem('rp_hub_hint_done'); }catch(e){}
+  if(hidden){ hint.style.display='none'; return; }
+  const btn=document.getElementById('tipsHintClose');
+  if(btn) btn.addEventListener('click',()=>{
+    try{ localStorage.setItem('rp_hub_hint_done','1'); }catch(e){}
+    hint.style.display='none';
+  });
+})();
 
 /* ================= EVENTS: GRID ================= */
 document.getElementById('grid').addEventListener('click', async e=>{
