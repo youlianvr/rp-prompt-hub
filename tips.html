@@ -103,6 +103,7 @@
     border-bottom:1px solid var(--border);
   }
   .length-opt:last-child{border-bottom:none}
+  .icon{display:inline-block;vertical-align:middle;flex-shrink:0}
   .length-opt.rec{background:rgba(139,92,246,.06);border-radius:8px;border-bottom:none}
   .length-label{font-size:13px;font-weight:700;margin-bottom:4px}
   .length-words{font-size:11px;color:var(--dim);font-family:var(--mono)}
@@ -135,7 +136,7 @@
   }
   .acc-head:hover{border-color:var(--border2);background:var(--panel2)}
   .acc-head.open{border-radius:12px 12px 0 0;border-color:var(--accent1)}
-  .acc-icon{font-size:12px;color:var(--dim);transition:transform .2s;margin-left:auto;flex-shrink:0}
+  .acc-icon{color:var(--dim);transition:transform .2s;margin-left:auto;flex-shrink:0}
   .acc-head.open .acc-icon{transform:rotate(180deg)}
   .acc-body{
     display:none;padding:16px 18px;
@@ -194,8 +195,13 @@
     #fbBtn{white-space:nowrap;padding:10px 12px}
   }
 </style>
-</head>
-<body>
+</head><body>
+
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></symbol>
+</svg>
+
 
 <header>
   <div class="head-inner">
@@ -206,7 +212,7 @@
         <a href="tips.html" class="on">Советы</a>
       </nav>
       <button class="btn ghost" id="fbBtn" title="Написать в Telegram">
-        <span>💬</span> Обратная связь
+        <svg class="icon" width="16" height="16"><use href="#i-chat"/></svg> Обратная связь
       </button>
     </div>
   </div>
@@ -279,7 +285,7 @@
   <div class="acc">
     <button class="acc-head" onclick="toggleAcc(this)">
       Как разобраться на сайте — что куда вставлять?
-      <span class="acc-icon">▼</span>
+      <svg class="acc-icon" width="12" height="12"><use href="#i-chevron"/></svg>
     </button>
     <div class="acc-body">
       Всё просто: на главной странице нажми <strong>«Копировать»</strong> на нужном промте. Открой чат с моделью и вставь <strong>первым сообщением</strong>. Вторым сообщением напиши завязку сцены или скажи «начни сам». Больше ничего вставлять не нужно — промт работает на весь диалог.
@@ -290,7 +296,7 @@
   <div class="acc">
     <button class="acc-head" onclick="toggleAcc(this)">
       Почему промт на английском, а я хочу на русском?
-      <span class="acc-icon">▼</span>
+      <svg class="acc-icon" width="12" height="12"><use href="#i-chevron"/></svg>
     </button>
     <div class="acc-body">
       Модели лучше понимают инструкции на английском — даже если ты общаешься на русском. Промт на английском даёт более точное следование правилам.
@@ -305,7 +311,7 @@
   <div class="acc">
     <button class="acc-head" onclick="toggleAcc(this)">
       Первым сообщением промт, вторым — что угодно?
-      <span class="acc-icon">▼</span>
+      <svg class="acc-icon" width="12" height="12"><use href="#i-chevron"/></svg>
     </button>
     <div class="acc-body">
       Да. Первое сообщение — промт целиком. Второе — завязка сцены (место, персонаж, ситуация) или просто «начни сам». Бот придумает начало.
@@ -316,7 +322,7 @@
   <div class="acc">
     <button class="acc-head" onclick="toggleAcc(this)">
       Что делает промт «Свобода» — он снимает цензуру?
-      <span class="acc-icon">▼</span>
+      <svg class="acc-icon" width="12" height="12"><use href="#i-chevron"/></svg>
     </button>
     <div class="acc-body">
       Да. «Свобода» — это слой поверх стандарта, который снимает контентные ограничения модели. Боевые сцены пишутся полностью, тёмные темы без упрощений, романтические — если сюжет туда пришёл. Если модель режет сцену или уходит в «fade to black» — бери «Свободу». Содержит весь стандарт, комбинировать не нужно.
@@ -327,7 +333,7 @@
   <div class="acc">
     <button class="acc-head" onclick="toggleAcc(this)">
       Как использовать OOC?
-      <span class="acc-icon">▼</span>
+      <svg class="acc-icon" width="12" height="12"><use href="#i-chevron"/></svg>
     </button>
     <div class="acc-body">
       Наш промт поддерживает OOC по умолчанию — бот понимает и вплетает любую информацию из OOC-заметок в историю. Через OOC можно:
@@ -344,7 +350,7 @@
   <div class="acc">
     <button class="acc-head" onclick="toggleAcc(this)">
       Бот пишет за моего персонажа — что делать?
-      <span class="acc-icon">▼</span>
+      <svg class="acc-icon" width="12" height="12"><use href="#i-chevron"/></svg>
     </button>
     <div class="acc-body">
       Даже строгий промт не гарантирует что бот не будет лезть за кулисы твоего персонажа. Напомни в OOC: <code>(OOC: не пиши за моего персонажа)</code> — это чинит за один ответ в большинстве случаев.
@@ -355,7 +361,7 @@
   <div class="acc">
     <button class="acc-head" onclick="toggleAcc(this)">
       Бот пишет больше диалогов, чем описаний
-      <span class="acc-icon">▼</span>
+      <svg class="acc-icon" width="12" height="12"><use href="#i-chevron"/></svg>
     </button>
     <div class="acc-body">
       Поставь длину ответа на <strong>Длинный (150–300 слов)</strong> или <strong>Экстра (500–800)</strong> — это даст боту больше пространства на описания, эмоции и детали окружения. Короткий ответ (15–30) автоматически упрощает текст до минимума.
@@ -366,7 +372,7 @@
   <div class="acc">
     <button class="acc-head" onclick="toggleAcc(this)">
       Я ролю на 500+ слов — как настроить?
-      <span class="acc-icon">▼</span>
+      <svg class="acc-icon" width="12" height="12"><use href="#i-chevron"/></svg>
     </button>
     <div class="acc-body">
       Используй пресет <strong>Экстра (500–800 слов)</strong> в панели длины. Или введи свои значения вручную. Промт подставит их автоматически при копировании. Настройки сохраняются в браузере.
@@ -377,7 +383,7 @@
   <div class="acc">
     <button class="acc-head" onclick="toggleAcc(this)">
       Бот стал мягким / «сдулся» — как вернуть характер?
-      <span class="acc-icon">▼</span>
+      <svg class="acc-icon" width="12" height="12"><use href="#i-chevron"/></svg>
     </button>
     <div class="acc-body">
       Жёсткий персонаж (солдат, наёмник, heads of state) вдруг начинает сюсюкать и дрожать.
