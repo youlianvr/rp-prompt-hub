@@ -100,10 +100,9 @@
   .length-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
   .length-opt{
     padding:12px 10px;border:1px solid var(--border);border-radius:10px;
-    cursor:pointer;transition:all .15s;text-align:center;
+    text-align:center;background:var(--panel);
   }
-  .length-opt:hover{border-color:var(--accent1);background:var(--panel2)}
-  .length-opt.on{border-color:var(--accent1);background:rgba(139,92,246,.15)}
+  .length-opt.rec{border-color:var(--accent1);background:rgba(139,92,246,.08)}
   .length-label{font-size:13px;font-weight:700;margin-bottom:4px}
   .length-words{font-size:11px;color:var(--dim);font-family:var(--mono)}
   .length-desc{font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.4}
@@ -266,9 +265,9 @@
     <div class="length-subtitle">Выбирается на <strong>главной странице</strong> в панели настроек над промтами — кнопки-пресеты (Короткий / Средний / Длинный / Экстра) или свои числа. Выбранное значение подставится в промт при копировании.</div>
     <div class="length-grid">
       <div class="length-opt"><div class="length-label">Короткий</div><div class="length-words">15–30 слов</div><div class="length-desc">Быстрый темп, диалоги</div></div>
-      <div class="length-opt on"><div class="length-label">Средний</div><div class="length-words">30–90 слов</div><div class="length-desc">Баланс действий и описаний</div></div>
-      <div class="length-opt"><div class="length-label">Длинный</div><div class="length-words">80–200 слов</div><div class="length-desc">Атмосферные сцены</div></div>
-      <div class="length-opt"><div class="length-label">Экстра</div><div class="length-words">150–500 слов</div><div class="length-desc">Длинные ролки</div></div>
+      <div class="length-opt rec"><div class="length-label">Средний <span style="color:var(--ok);font-size:11px">рекомендовано</span></div><div class="length-words">30–90 слов</div><div class="length-desc">Баланс действий и описаний</div></div>
+      <div class="length-opt"><div class="length-label">Длинный</div><div class="length-words">150–300 слов</div><div class="length-desc">Атмосферные сцены, описание окружения</div></div>
+      <div class="length-opt"><div class="length-label">Экстра</div><div class="length-words">500–800 слов</div><div class="length-desc">Длинные ролки, романы</div></div>
     </div>
   </div>
 
@@ -319,7 +318,7 @@
       <span class="acc-icon">▼</span>
     </button>
     <div class="acc-body">
-      Да. «Свобода» — это слой поверх стандарта, который снимает контентные ограничения модели. Боевка без купюр, тёмные темы, интим с крафтом. Если модель режет сцену или уходит в «fade to black» — бери «Свободу». Содержит тот же функционал что и Стандарт, комбинировать не нужно.
+      Да. «Свобода» — это слой поверх стандарта, который снимает контентные ограничения модели. Боевые сцены пишутся полностью, тёмные темы без упрощений, романтические — если сюжет туда пришёл. Если модель режет сцену или уходит в «fade to black» — бери «Свободу». Содержит весь стандарт, комбинировать не нужно.
     </div>
   </div>
 
@@ -358,7 +357,7 @@
       <span class="acc-icon">▼</span>
     </button>
     <div class="acc-body">
-      Поставь длину ответа на <strong>Длинный (80–200 слов)</strong> или <strong>Экстра (150–500)</strong> — это даст боту больше пространства на описания, эмоции и детали окружения. Короткий ответ (15–30) автоматически упрощает текст до минимума.
+      Поставь длину ответа на <strong>Длинный (150–300 слов)</strong> или <strong>Экстра (500–800)</strong> — это даст боту больше пространства на описания, эмоции и детали окружения. Короткий ответ (15–30) автоматически упрощает текст до минимума.
     </div>
   </div>
 
@@ -369,7 +368,7 @@
       <span class="acc-icon">▼</span>
     </button>
     <div class="acc-body">
-      Используй пресет <strong>Экстра (150–500 слов)</strong> в панели длины. Или введи свои значения вручную: например 300–800. Промт подставит их автоматически при копировании. Настройки сохраняются в браузере.
+      Используй пресет <strong>Экстра (500–800 слов)</strong> в панели длины. Или введи свои значения вручную. Промт подставит их автоматически при копировании. Настройки сохраняются в браузере.
     </div>
   </div>
 
