@@ -103,7 +103,7 @@
   .modal-settings-label{font-size:12px;font-weight:600;color:var(--muted);width:100%}
   /* ---------- grid ---------- */
   main{max-width:1240px;margin:0 auto;padding:24px 22px 100px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:16px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr) 300px;gap:16px;align-items:start}
   .card{
     background:var(--panel); border:1px solid var(--border); border-radius:14px;
     padding:16px 16px 14px; display:flex; flex-direction:column; gap:10px;
@@ -154,15 +154,14 @@
   .tips-hint .close{margin-left:auto;background:none;border:none;color:var(--dim);cursor:pointer;font-size:15px;line-height:1;padding:2px 4px}
   .tips-hint .close:hover{color:var(--text)}
   /* ---------- profile section ---------- */
-  .profile-section{
-    max-width:420px;margin:60px auto 0;padding:0 22px;
-  }
-  .profile-card{
+  .grid-profile{
+    grid-column:3;grid-row:1/3;
+    position:sticky;top:80px;
     background:var(--panel);border:1px solid var(--border);border-radius:20px;
-    padding:40px 32px 32px;display:flex;flex-direction:column;align-items:center;
-    text-align:center;position:relative;overflow:hidden;
+    padding:40px 24px 28px;display:flex;flex-direction:column;align-items:center;
+    text-align:center;overflow:hidden;
   }
-  .profile-card::before{
+  .grid-profile::before{
     content:'';position:absolute;top:0;left:0;right:0;height:100px;
     background:linear-gradient(135deg,rgba(139,92,246,.2),rgba(217,70,239,.15));
     border-radius:20px 20px 0 0;
@@ -263,6 +262,7 @@
     .btn{padding:10px 14px;min-height:42px;font-size:13px}
     main{padding:16px 14px 100px}
     .grid{grid-template-columns:1fr;gap:12px}
+    .grid-profile{grid-column:1;grid-row:auto;position:static;margin-top:24px}
     .card{padding:14px 14px 12px}
     .card-title{font-size:14.5px}
     .tag{font-size:11px;padding:4px 10px}
@@ -280,8 +280,7 @@
     .len-chip{flex:1;min-width:70px;justify-content:center;text-align:center;padding:9px 8px;font-size:12.5px}
     select.num, input.num{flex:1;min-width:0;font-size:15px;padding:9px 12px}
     input.num{width:auto}
-    .profile-section{margin-top:40px;padding:0 14px}
-    .profile-card{padding:32px 20px 28px}
+    .grid-profile{padding:32px 20px 28px}
     .profile-avatar{width:90px;height:90px}
     .profile-name{font-size:19px}
     .overlay{padding:0}
@@ -347,10 +346,8 @@
     <a href="tips.html">в Советах →</a>
     <button class="close" id="tipsHintClose" aria-label="Скрыть">✕</button>
   </div>
-  <div class="grid" id="grid"></div>
-
-  <div class="profile-section">
-    <div class="profile-card">
+  <div class="grid" id="grid">
+    <div class="profile-card grid-profile">
       <img class="profile-avatar" src="avatar.jpg" alt="Niko OneShot">
       <div class="profile-name">Niko OneShot</div>
       <div class="profile-handle">@TheWorld_Machine</div>
