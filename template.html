@@ -635,6 +635,8 @@ function openModal(p, tab, withSettings){
   buildHist(p,'chat');
   switchTab(tab==='hist'?'hist':'text');
   overlay.classList.add('open');
+  lastFocus=document.activeElement;
+  document.getElementById('mClose').focus();
 }
 function buildPair(p){
   const wrap=document.getElementById('pairWrap');
@@ -740,9 +742,24 @@ function switchTab(t){
 document.querySelectorAll('.modal-tabs .tab').forEach(t=>{
   t.addEventListener('click',()=>switchTab(t.dataset.tab));
 });
-document.getElementById('mClose').onclick=()=>overlay.classList.remove('open');
-overlay.addEventListener('click',e=>{ if(e.target===overlay) overlay.classList.remove('open'); });
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') overlay.classList.remove('open'); });
+document.getElementById('mClose').onclick=()=>closeModal();
+overlay.addEventListener('click',e=>{ if(e.target===overlay) closeModal(); });
+let lastFocus=null;
+function closeModal(){
+  overlay.classList.remove('open');
+  if(lastFocus&&lastFocus.focus) lastFocus.focus();
+}
+document.addEventListener('keydown',e=>{
+  if(!overlay.classList.contains('open')) return;
+  if(e.key==='Escape'){ closeModal(); return; }
+  if(e.key!=='Tab') return;
+  const f=[...overlay.querySelectorAll('button,select,input,[tabindex="0"]')].filter(x=>x.offsetParent!==null);
+  if(!f.length) return;
+  const first=f[0], last=f[f.length-1];
+  if(e.shiftKey&&document.activeElement===first){ e.preventDefault(); last.focus(); }
+  else if(!e.shiftKey&&document.activeElement===last){ e.preventDefault(); first.focus(); }
+  else if(!overlay.contains(document.activeElement)){ e.preventDefault(); first.focus(); }
+});
 
 document.getElementById('mCopy').addEventListener('click',async function(){
   if(!cur) return;
