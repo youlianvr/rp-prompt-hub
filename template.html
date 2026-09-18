@@ -8,7 +8,7 @@
 :root{
 --bg:#080d1a;--bg2:#0f1628;--surface:#131c30;--elevated:#1a2540;
 --border:#1a2a45;--border2:#2a3a58;
---text:#e2e5ec;--muted:#94a3b8;--dim:#64748b;
+--text:#e2e5ec;--muted:#94a3b8;--dim:#8ba0b8;
 --accent:#a78bfa;--accent-dim:rgba(167,139,250,.10);
 --ok:#4ade80;--bad:#f87171;
 --glow:rgba(139,92,246,.07);
@@ -148,6 +148,33 @@ main{padding:20px 16px 100px}.grid{grid-template-columns:1fr;gap:12px}
 .textwrap pre{font-size:12px;padding:14px;line-height:1.6}.hitem{padding:10px 12px}
 footer{padding-bottom:env(safe-area-inset-bottom)}.foot-inner{padding:8px 16px;gap:8px}
 .foot-note{display:none}.visits img{height:18px}}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.fchip{font-size:12px;font-weight:500;color:var(--dim);cursor:pointer;background:transparent;border:1px solid var(--border);border-radius:6px;padding:6px 14px;transition:all .15s;user-select:none;font-family:var(--ui)}
+.fchip:hover{color:var(--text);border-color:var(--border2)}
+.fchip.on{background:var(--bg2);border-color:var(--accent);color:var(--text)}
+.badge-pair{font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:4px;background:var(--accent-dim);color:var(--accent);white-space:nowrap}
+.part-head{display:flex;align-items:center;gap:8px;margin:2px 0 6px}
+.part-title{font-size:12px;font-weight:600;color:var(--text)}
+.part-where{font-size:11px;color:var(--accent);background:var(--accent-dim);padding:2px 8px;border-radius:4px;white-space:nowrap}
+.part-copy{margin-left:auto;padding:5px 12px;font-size:12px}
+.pair-wrap{display:none;flex-direction:column;flex:1;min-height:0;gap:8px}
+.pair-wrap .textwrap{flex:0 1 auto;max-height:44%}
+.cust{display:none;flex-direction:column;gap:8px;overflow-y:auto;flex:1;min-height:0}
+.cust-note{font-size:12px;color:var(--muted);line-height:1.5;padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px}
+.opt-row{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .15s}
+.opt-row:hover{border-color:var(--border2);background:var(--bg2)}
+.opt-row.on{border-color:rgba(167,139,250,.45)}
+.opt-name{font-size:13px;font-weight:600;color:var(--text)}
+.opt-desc{font-size:12px;color:var(--muted);line-height:1.5;margin-top:2px}
+.opt-adv{font-size:10px;font-weight:600;color:var(--dim);border:1px solid var(--border2);padding:1px 6px;border-radius:4px;margin-left:6px;vertical-align:1px}
+.sw{position:relative;width:34px;height:20px;border-radius:10px;background:var(--border);transition:background .15s;flex-shrink:0;margin-top:2px}
+.sw::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--muted);transition:all .15s}
+.opt-row.on .sw{background:var(--accent)}
+.opt-row.on .sw::after{left:16px;background:#000}
+.btn:focus-visible,.tab:focus-visible,.len-chip:focus-visible,.fchip:focus-visible,.modal-close:focus-visible,.opt-row:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media(max-width:768px){.overlay{align-items:flex-end}.modal{border-radius:14px 14px 0 0;animation:sheet .22s ease}}
+@keyframes sheet{from{transform:translateY(60px);opacity:0}to{transform:none;opacity:1}}
+@media(prefers-reduced-motion:reduce){.modal{animation:none}}
 @media(max-width:380px){nav.pages a{font-size:11px;padding:4px 8px}}</style>
 <script data-goatcounter="https://youlian.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
@@ -192,6 +219,11 @@ footer{padding-bottom:env(safe-area-inset-bottom)}.foot-inner{padding:8px 16px;g
     <span>Впервые здесь? Как начать, настройка длины и частые вопросы —</span>
     <a href="tips.html">в Советах →</a>      <button class="close" id="tipsHintClose" aria-label="Скрыть"><svg class="icon" width="14" height="14"><use href="#i-x"/></svg></button>
   </div>
+  <div class="filters" id="filters">
+    <button type="button" class="fchip on" data-kind="all">Все</button>
+    <button type="button" class="fchip" data-kind="chat">В чат</button>
+    <button type="button" class="fchip" data-kind="pair">Системный + чат</button>
+  </div>
   <div class="grid" id="grid"></div>
 </main>
 
@@ -202,7 +234,7 @@ footer{padding-bottom:env(safe-area-inset-bottom)}.foot-inner{padding:8px 16px;g
 </footer>
 
 <div class="overlay" id="overlay">
-  <div class="modal" role="dialog" aria-modal="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
     <div class="modal-head">
       <div>
         <div class="modal-title" id="mTitle"></div>
@@ -246,6 +278,7 @@ footer{padding-bottom:env(safe-area-inset-bottom)}.foot-inner{padding:8px 16px;g
     <div class="modal-tabs">
       <div class="tab on" data-tab="text">Текст</div>
       <div class="tab" data-tab="hist" id="histTab">История версий</div>
+      <div class="tab" data-tab="cust" id="custTab">Кастомизация</div>
     </div>
     <div class="modal-body">
       <div class="toolbar" id="mToolbar" style="display:none">
@@ -253,7 +286,9 @@ footer{padding-bottom:env(safe-area-inset-bottom)}.foot-inner{padding:8px 16px;g
         <span class="ver-badge" id="mVer"></span>
         <button class="btn ghost" id="mDiff" style="display:none">Дифф с предыдущей</button>         <button class="btn ghost" id="mFb" style="margin-left:auto"><svg class="icon" width="14" height="14"><use href="#i-chat"/></svg> Фидбек</button>
       </div>
+      <div class="pair-wrap" id="pairWrap"></div>
       <div class="textwrap" id="mTextWrap"><pre id="mText"></pre></div>
+      <div class="cust" id="custWrap"></div>
       <div class="hist" id="mHist" style="display:none"></div>
     </div>
   </div>
@@ -390,11 +425,41 @@ function modelColor(m){
   return '#94a3b8';
 }
 
+/* ================= OPTIONS (CUSTOMIZATION) ================= */
+let optOn={};
+function applyOptions(text){
+  if(!text) return text;
+  return text.replace(/<!--\s*OPTION:([a-zA-Z0-9_-]+)\s*-->([\s\S]*?)<!--\s*\/OPTION\s*-->/g,(m,id,block)=>{
+    return optOn[id]===false?'':block;
+  });
+}
+function buildCust(p){
+  const wrap=document.getElementById('custWrap');
+  const opts=p.options||[];
+  opts.forEach(o=>{ if(!(o.id in optOn)) optOn[o.id]=true; });
+  wrap.innerHTML='<div class="cust-note">Включённые блоки остаются в промте, выключенные — вырезаются при копировании. Ядро (характеры, стиль, директивы) несъёмно.</div>'+
+    opts.map(o=>'<div class="opt-row'+(optOn[o.id]!==false?' on':'')+'" role="switch" aria-checked="'+(optOn[o.id]!==false)+'" tabindex="0" data-opt="'+o.id+'">'+
+      '<div style="flex:1;min-width:0"><div class="opt-name">'+esc(o.label)+(o.advanced?'<span class="opt-adv">тяжёлый блок</span>':'')+'</div><div class="opt-desc">'+esc(o.description)+'</div></div><span class="sw"></span></div>').join('');
+  wrap.querySelectorAll('.opt-row').forEach(row=>{
+    const toggle=()=>{
+      const id=row.dataset.opt;
+      optOn[id]=optOn[id]===false?true:false;
+      row.classList.toggle('on',optOn[id]!==false);
+      row.setAttribute('aria-checked',optOn[id]!==false?'true':'false');
+      refreshModalText();
+      if(cur&&cur.kind==='pair') renderPart(cur,'system');
+    };
+    row.addEventListener('click',toggle);
+    row.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); } });
+  });
+}
+
 /* ================= STATE & RENDER ================= */
 function cardHtml(p){
   const models=(p.models||[]).map(m=>'<span class="tag model" style="background:'+modelColor(m)+'">'+esc(m)+'</span>').join('');
-  const jbBadge=p.jb?'<button class="btn badge-jb" style="padding:2px 8px;font-size:10.5px;cursor:default">свобода</button>'
-                     :'<button class="btn badge-craft" style="padding:2px 8px;font-size:10.5px;cursor:default">стандарт</button>';
+  const kindBadge=p.kind==='pair'?'<span class="badge-pair">пара</span>':'';
+  const jbBadge=p.jb?'<span class="badge-jb" style="padding:2px 8px;font-size:10.5px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--muted)">свобода</span>'
+                     :'<span class="badge-craft" style="padding:2px 8px;font-size:10.5px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--muted)">стандарт</span>';
   const prev=fillVars(p.content||'').replace(/\s+/g,' ').trim().slice(0,240);
   const ver=p.versionCount||0;
   const updBadge=p.updated?'<span class="badge-upd"><svg class="icon" width="12" height="12" style="vertical-align:-1px"><use href="#i-clock"/></svg> '+fmtDate(p.updated)+'</span>':'';
@@ -404,14 +469,13 @@ function cardHtml(p){
     '<div class="card-head">'+
       '<div>'+
         '<div class="card-title">'+esc(p.title||p.file)+'</div>'+
-      '</div>'+jbBadge+
+      '</div>'+kindBadge+jbBadge+
     '</div>'+
     '<div class="card-tags">'+models+'</div>'+
     (p.description?'<div class="card-desc">'+esc(p.description)+'</div>':'')+
     '<div class="card-foot">'+
       '<div class="meta">'+updBadge+'<span>'+updv+'</span></div>'+
       '<div class="card-actions">'+
-        '<button class="btn ghost" data-act="detail">Подробнее</button>'+
         '<button class="btn ghost" data-act="hist">История</button>'+
         '<button class="btn primary" data-act="select">Выбрать</button>'+
       '</div>'+
@@ -430,16 +494,25 @@ function profileHtml(){
   h+='</div>';
   return h;
 }
+let kindFilter='all';
 function render(){
   var grid=document.getElementById('grid');
-  if(!PROMPTS.length){
+  const list=kindFilter==='all'?PROMPTS:PROMPTS.filter(p=>p.kind===kindFilter);
+  if(!list.length){
     grid.innerHTML='<div class="empty">Пока пусто — коллекция наполняется, загляни позже</div>'+profileHtml();
   }else{
-    grid.innerHTML=PROMPTS.map(cardHtml).join('')+profileHtml();
+    grid.innerHTML=list.map(cardHtml).join('')+profileHtml();
   }
   observeCards();
   setFbButtons();
 }
+document.getElementById('filters').addEventListener('click',e=>{
+  const ch=e.target.closest('.fchip');
+  if(!ch) return;
+  document.querySelectorAll('#filters .fchip').forEach(x=>x.classList.toggle('on',x===ch));
+  kindFilter=ch.dataset.kind;
+  render();
+});
 
 /* ================= REVEAL ON SCROLL ================= */
 const revealIO = ('IntersectionObserver' in window)
@@ -496,8 +569,6 @@ document.getElementById('grid').addEventListener('click', async e=>{
   if(btn){
     if(btn.dataset.act==='select'){
       openModal(p,'text',true);
-    }else if(btn.dataset.act==='detail'){
-      openModal(p,'text',false);
     }else if(btn.dataset.act==='hist'){
       openModal(p,'hist',false);
     }
@@ -521,7 +592,7 @@ document.getElementById('langHintOpen').addEventListener('click',()=>{
 });
 
 /* ================= MODAL ================= */
-let cur=null, curVersion=null, diffOn=false, showSettings=false;
+let cur=null, curVersion=null, curPart='chat', diffOn=false, showSettings=false;
 const overlay=document.getElementById('overlay');
 
 function openJbHint(){
@@ -538,12 +609,21 @@ document.getElementById('jbHintOpen').addEventListener('click',()=>{
 });
 
 function openModal(p, tab, withSettings){
-  cur=p; curVersion=null; diffOn=false; showSettings=!!withSettings;
+  cur=p; curVersion=null; curPart='chat'; diffOn=false; showSettings=!!withSettings && p.kind!=='pair';
+  const isPair=p.kind==='pair';
   document.getElementById('mTitle').textContent=p.title||'';
   document.getElementById('mFile').textContent='';
   document.getElementById('mVer').textContent='текущая версия'+(p.updated?' · '+fmtDate(p.updated):'');
-  document.getElementById('mText').textContent=fillVars(p.content||'(пусто)');
+  document.getElementById('pairWrap').style.display=isPair?'flex':'none';
+  document.getElementById('mTextWrap').style.display=isPair?'none':'block';
+  if(isPair){
+    buildPair(p);
+  }else{
+    document.getElementById('mText').textContent=applyOptions(fillVars(p.content||'(пусто)'));
+  }
   document.getElementById('mDiff').style.display='none';
+  const hasOpts=(p.options||[]).length>0;
+  document.getElementById('custTab').style.display=hasOpts?'':'none';
   const ms=document.getElementById('modalSettings');
   ms.classList.toggle('open', showSettings);
   var langF=document.getElementById('langField');
@@ -552,24 +632,58 @@ function openModal(p, tab, withSettings){
   openJbHint();
   const fb=document.getElementById('mFb');
   fb.onclick=()=>openUrl(tgLink('Привет! Пишу по поводу промпта «'+p.title+'»: '));
-  buildHist(p);
+  buildHist(p,'chat');
   switchTab(tab==='hist'?'hist':'text');
   overlay.classList.add('open');
 }
-function refreshModalText(){
-  if(cur && showSettings){
-    document.getElementById('mText').textContent=fillVars(cur.content||'(пусто)');
-  }
+function buildPair(p){
+  const wrap=document.getElementById('pairWrap');
+  wrap.innerHTML=
+    '<div class="part-head"><span class="part-title">Системный промт</span><span class="part-where">в настройки модели</span>'+
+      '<button type="button" class="btn ghost part-copy" data-copy="system">⧉ Копировать</button>'+
+      ((p.versionsSystem||[]).length?'<button type="button" class="btn ghost part-copy" data-hist="system">История</button>':'')+
+    '</div>'+
+    '<div class="textwrap"><pre id="mTextSys"></pre></div>'+
+    '<div class="part-head"><span class="part-title">Чат-промт</span><span class="part-where">первым сообщением</span>'+
+      '<button type="button" class="btn ghost part-copy" data-copy="chat">⧉ Копировать</button>'+
+      ((p.versions||[]).length?'<button type="button" class="btn ghost part-copy" data-hist="chat">История</button>':'')+
+    '</div>'+
+    '<div class="textwrap"><pre id="mTextChat"></pre></div>';
+  renderPart(p,'system'); renderPart(p,'chat');
+  wrap.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',async function(){
+    const part=this.dataset.copy;
+    const text=part==='system'?applyOptions(fillVars(p.contentSystem||'')):fillVars(p.content||'');
+    const ok=await copyText(text);
+    toast(ok?'Скопировано в буфер':'Не удалось скопировать');
+    flashCopy(this);
+  }));
+  wrap.querySelectorAll('[data-hist]').forEach(b=>b.addEventListener('click',function(){
+    curPart=this.dataset.hist;
+    buildHist(cur,curPart);
+    switchTab('hist');
+  }));
 }
-function buildHist(p){
+function renderPart(p,part){
+  const el=document.getElementById(part==='system'?'mTextSys':'mTextChat');
+  if(!el) return;
+  const src=part==='system'?(p.contentSystem||''):(p.content||'');
+  el.textContent=part==='system'?applyOptions(fillVars(src)):fillVars(src);
+}
+function refreshModalText(){
+  if(!cur) return;
+  if(cur.kind==='pair'){ renderPart(cur,'system'); return; }
+  document.getElementById('mText').textContent=applyOptions(fillVars(cur.content||'(пусто)'));
+}
+function buildHist(p, part){
+  curPart=part||'chat';
   const wrap=document.getElementById('mHist');
-  const vs=p.versions||[];
+  const vs=curPart==='system'?(p.versionsSystem||[]):(p.versions||[]);
   wrap.innerHTML='';
+  document.getElementById('histTab').textContent='История версий'+(vs.length?' ('+vs.length+')':'');
   if(!vs.length){
     wrap.innerHTML='<div class="empty">История пуста — версии считаются с момента сброса.</div>';
     return;
   }
-  document.getElementById('histTab').textContent='История версий ('+vs.length+')';
   vs.forEach((v,i)=>{
     const el=document.createElement('div');
     el.className='hitem'+(i===0?' on':'');
@@ -585,24 +699,43 @@ function buildHist(p){
         toast('Контент этой версии недоступен');
         return;
       }
-      curVersion=i;
-      diffOn=false;
-      document.getElementById('mDiff').style.display=i>0?'inline-flex':'none';
-      document.getElementById('mVer').textContent='версия '+shortHash(v.hash)+' · '+fmtDate(v.date);
-      document.getElementById('mText').textContent=fillVars(v.content||'');
+      selectVersion(i);
       wrap.querySelectorAll('.hitem').forEach(x=>x.classList.remove('on'));
       el.classList.add('on');
     };
     wrap.appendChild(el);
   });
 }
+function setTextContent(t){
+  const pre=document.getElementById('mText');
+  if(pre) pre.textContent=t;
+}
+function currentVersions(){ return curPart==='system'?(cur.versionsSystem||[]):(cur.versions||[]); }
+function selectVersion(i){
+  const vs=currentVersions();
+  curVersion=i;
+  diffOn=false;
+  const db=document.getElementById('mDiff');
+  db.style.display=i>0?'inline-flex':'none';
+  db.textContent='Дифф с предыдущей';
+  const dv=document.getElementById('diffView');
+  if(dv) dv.remove();
+  const pre=document.getElementById('mText');
+  if(pre) pre.style.display='block';
+  document.getElementById('mVer').textContent='версия '+shortHash(vs[i].hash)+' · '+fmtDate(vs[i].date);
+  setTextContent(applyOptions(fillVars((vs[i]||{}).content||'')));
+}
 function switchTab(t){
   document.querySelectorAll('.modal-tabs .tab').forEach(x=>x.classList.toggle('on',x.dataset.tab===t));
-  const isText=t==='text';
-  document.getElementById('mTextWrap').style.display=isText?'block':'none';
-  document.getElementById('mHist').style.display=isText?'none':'flex';
+  const isPair=cur&&cur.kind==='pair';
+  const isText=t==='text', isCust=t==='cust';
+  document.getElementById('mTextWrap').style.display=isText&&!isPair?'block':'none';
+  document.getElementById('pairWrap').style.display=isText&&isPair?'flex':'none';
+  document.getElementById('mHist').style.display=t==='hist'?'flex':'none';
+  document.getElementById('custWrap').style.display=isCust?'flex':'none';
   document.getElementById('mToolbar').style.display=isText&&showSettings?'flex':'none';
-  if(!isText) buildHist(cur);
+  if(t==='hist') buildHist(cur,curPart);
+  if(isCust) buildCust(cur);
 }
 document.querySelectorAll('.modal-tabs .tab').forEach(t=>{
   t.addEventListener('click',()=>switchTab(t.dataset.tab));
@@ -613,8 +746,8 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape') overlay.classList.
 
 document.getElementById('mCopy').addEventListener('click',async function(){
   if(!cur) return;
-  const v=curVersion===null?cur.content:(cur.versions[curVersion]||{}).content;
-  const ok=await copyText(fillVars(v||''));
+  const v=curVersion===null?cur.content:(currentVersions()[curVersion]||{}).content;
+  const ok=await copyText(applyOptions(fillVars(v||'')));
   toast(ok?'Скопировано в буфер':'Не удалось скопировать');
   flashCopy(this);
 });
@@ -640,15 +773,20 @@ document.getElementById('mDiff').addEventListener('click',function(){
   if(!cur||curVersion===null||curVersion<1) return;
   diffOn=!diffOn;
   this.textContent=diffOn?'Показать текст':'Дифф с предыдущей';
+  const wrap=document.getElementById('mTextWrap');
+  const textPre=document.getElementById('mText');
   if(!diffOn){
-    document.getElementById('mText').textContent=cur.versions[curVersion].content;
+    const dv=document.getElementById('diffView');
+    if(dv) dv.remove();
+    textPre.style.display='block';
+    textPre.textContent=fillVars(currentVersions()[curVersion].content||'');
     return;
   }
-  const old=fillVars(cur.versions[curVersion-1].content||'');
-  const neu=fillVars(cur.versions[curVersion].content||'');
+  const old=fillVars(currentVersions()[curVersion-1].content||'');
+  const neu=fillVars(currentVersions()[curVersion].content||'');
   const lines=diffLines(old,neu);
   const pre=document.createElement('pre');
-  pre.className='diff';
+  pre.className='diff'; pre.id='diffView';
   lines.forEach(l=>{
     const span=document.createElement('div');
     if(l.t==='+'){span.className='add';span.textContent='+ '+l.x;}
@@ -656,8 +794,8 @@ document.getElementById('mDiff').addEventListener('click',function(){
     else{span.textContent='  '+l.x;}
     pre.appendChild(span);
   });
-  const wrap=document.getElementById('mTextWrap');
-  wrap.innerHTML=''; wrap.appendChild(pre);
+  textPre.style.display='none';
+  wrap.appendChild(pre);
 });
 
 /* ================= INIT ================= */

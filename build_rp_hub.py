@@ -11,15 +11,21 @@ Usage:
 """
 
 import json
+import re
 import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-PROMPTS_DIR = REPO_ROOT / "unfiltered" / "GOODboy-mode" / "prompts"
-PROMPTS_PREFIX = "unfiltered/GOODboy-mode/prompts/"
 HERE = Path(__file__).resolve().parent
+# Prompts live inside the project since 2026-09-18 (decoupled from the
+# unfiltered/GOODboy-mode collection). LEGACY_PREFIX keeps the pre-move
+# history visible: old commits stored the files under the collection path,
+# and the history filter below must accept both to not blank out versions.
+PROMPTS_DIR = HERE / "prompts"
+PROMPTS_PREFIX = "projects/rp-hub/prompts/"
+LEGACY_PREFIX = "unfiltered/GOODboy-mode/prompts/"
 TEMPLATE = HERE / "template.html"
 MANIFEST = HERE / "manifest.json"
 # Output lives at the folder root (alongside sources) so `git subtree push`
@@ -39,6 +45,53 @@ CONFIG = {
 # ISO timestamp are excluded from the site (real git history is untouched).
 # History accumulates again from this moment. Set to None to show all history.
 RESET_AT = "2026-08-05T23:40:00+03:00"
+
+# Toggleable rule blocks. Markers live in the prompt files; the builder
+# extracts them so the site can show per-block switches in the
+# Customization tab. Options marked `advanced` are heavy-flavour rules
+# (on by default, easy to drop). Core rules carry no markers and are
+# always part of the prompt.
+OPTION_RE = re.compile(
+    r"<!--\s*OPTION:([a-zA-Z0-9_-]+)\s*-->(.*?)<!--\s*/OPTION\s*-->",
+    re.DOTALL,
+)
+
+OPTIONS_META = {
+    "tempo": {
+        "label": "Контроль темпа",
+        "description": "Запрет самовольных таймскипов и пересказа («они поели, поговорили, к вечеру пошли домой»). Один момент — сколько угодно ходов, после реплики игрока — реакция и стоп.",
+    },
+    "depth": {
+        "label": "Глубина реакций",
+        "description": "Запрет дежурных поверхностных ответов: подтекст, личная заинтересованность, конкретная память персонажа вместо первого очевидного ответа.",
+    },
+    "format": {
+        "label": "Чистое форматирование",
+        "description": "Без выделений в прозе, без дробления «Точка. После. Каждого. Слова.», без инородных слов без внутриигровой причины.",
+    },
+    "blood": {
+        "label": "Кровь и мясо (§13)",
+        "description": "Жёсткий телесный бой: раны болеют и остаются, без исчезающей крови. Тяжёлый блок — отключи для лёгких или детских сюжетов.",
+        "advanced": True,
+    },
+}
+
+
+def extract_options(text):
+    """Return ([{id,label,description,advanced}], positions preserved).
+    Options are listed in file order; unknown ids are skipped with a
+    console warning so a typo never silently ships to the site."""
+    found, warned = [], set()
+    for m in OPTION_RE.finditer(text):
+        oid = m.group(1)
+        meta = OPTIONS_META.get(oid)
+        if meta is None:
+            if oid not in warned:
+                print(f"WARNING: unknown option id '{oid}' in prompt file", file=sys.stderr)
+                warned.add(oid)
+            continue
+        found.append({"id": oid, **meta})
+    return found
 
 
 def git(args):
@@ -83,7 +136,8 @@ def file_history(rel, follow=True):
     # Keep only commits where the file actually lived inside the prompt
     # collection. Rename/copy chains that wander into other dirs (or AGENT.md
     # from the initial commit) are noise, not history.
-    return [c for c in commits if c.get("path") and c["path"].startswith(PROMPTS_PREFIX)]
+    return [c for c in commits if c.get("path") and
+            (c["path"].startswith(PROMPTS_PREFIX) or c["path"].startswith(LEGACY_PREFIX))]
 
 
 def file_at(path, commit):
@@ -99,41 +153,75 @@ def build():
     prompts, skipped = [], []
     for entry in entries:
         fname = entry["file"]
-        rel = "unfiltered/GOODboy-mode/prompts/" + fname
+        rel = PROMPTS_PREFIX + fname
         path = PROMPTS_DIR / fname
         if not path.exists():
             skipped.append(fname)
             continue
-        content = path.read_text(encoding="utf-8", errors="replace")
-        hist = file_history(rel, follow=not entry.get("noFollow", False))
-        cutoff = datetime.fromisoformat(RESET_AT) if RESET_AT else None
-        versions = []
-        for v in hist:
-            if cutoff is not None:
-                try:
-                    if datetime.fromisoformat(v["date"]) < cutoff:
-                        continue
-                except ValueError:
-                    pass
-            path_at = v.get("path") or rel
-            versions.append({**v, "content": file_at(path_at, v["hash"])})
-        prompts.append(
-            {
-                "file": fname,
-                "title": entry.get("title", fname),
-                "description": entry.get("description", ""),
-                "models": entry.get("models", []),
-                "tags": entry.get("tags", []),
-                "jb": bool(entry.get("jb", False)),
-                "size": len(content),
-                "content": content,
-                "versions": versions,
-                "versionCount": len(versions),
-                "updated": versions[0]["date"]
-                if versions
-                else datetime.fromtimestamp(path.stat().st_mtime).astimezone().isoformat(),
-            }
-        )
+
+        def load_part(part_fname, follow):
+            part_rel = PROMPTS_PREFIX + part_fname
+            part_path = PROMPTS_DIR / part_fname
+            if not part_path.exists():
+                return None, [], []
+            raw = part_path.read_text(encoding="utf-8", errors="replace")
+            hist = file_history(part_rel, follow=follow)
+            cutoff = datetime.fromisoformat(RESET_AT) if RESET_AT else None
+            versions = []
+            for v in hist:
+                if cutoff is not None:
+                    try:
+                        if datetime.fromisoformat(v["date"]) < cutoff:
+                            continue
+                    except ValueError:
+                        pass
+                path_at = v.get("path") or part_rel
+                versions.append({**v, "content": file_at(path_at, v["hash"])})
+            return raw, versions, extract_options(raw)
+
+        content, versions, options = load_part(fname, follow=not entry.get("noFollow", False))
+        prompt = {
+            "file": fname,
+            "kind": "chat",
+            "title": entry.get("title", fname),
+            "description": entry.get("description", ""),
+            "models": entry.get("models", []),
+            "tags": entry.get("tags", []),
+            "jb": bool(entry.get("jb", False)),
+            "size": len(content),
+            "content": content,
+            "options": options,
+            "versions": versions,
+            "versionCount": len(versions),
+            "updated": versions[0]["date"]
+            if versions
+            else datetime.fromtimestamp(path.stat().st_mtime).astimezone().isoformat(),
+        }
+
+        sys_fname = entry.get("fileSystem")
+        if sys_fname:
+            sys_path = PROMPTS_DIR / sys_fname
+            if not sys_path.exists():
+                skipped.append(sys_fname)
+            else:
+                sys_raw, sys_versions, sys_options = load_part(
+                    sys_fname, follow=not entry.get("noFollowSystem", entry.get("noFollow", False))
+                )
+                prompt["kind"] = "pair"
+                prompt["fileSystem"] = sys_fname
+                prompt["contentSystem"] = sys_raw
+                prompt["sizeSystem"] = len(sys_raw)
+                # Options govern the system part (that is where the rules live).
+                prompt["options"] = sys_options or options
+                prompt["versionsSystem"] = sys_versions
+                prompt["versionCountSystem"] = len(sys_versions)
+                prompt["updatedSystem"] = (
+                    sys_versions[0]["date"]
+                    if sys_versions
+                    else datetime.fromtimestamp(sys_path.stat().st_mtime).astimezone().isoformat()
+                )
+
+        prompts.append(prompt)
 
     data = {"site": CONFIG, "prompts": prompts}
     json_str = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
@@ -149,9 +237,10 @@ def build():
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(html, encoding="utf-8")
-    total = sum(p["size"] for p in prompts)
-    print(f"OK: {len(prompts)} prompts ({total/1024:.0f} KB text), "
-          f"skipped: {skipped or '-'}")
+    total = sum(p["size"] + p.get("sizeSystem", 0) for p in prompts)
+    kinds = [p["kind"] for p in prompts]
+    print(f"OK: {len(prompts)} prompts ({sum(1 for k in kinds if k == 'pair')} pairs) "
+          f"({total/1024:.0f} KB text), skipped: {skipped or '-'}")
     print(f"-> {OUT} ({OUT.stat().st_size/1024:.0f} KB)")
 
     # Copy static pages and assets into dist/

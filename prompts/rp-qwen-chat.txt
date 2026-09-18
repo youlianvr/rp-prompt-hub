@@ -1,0 +1,17 @@
+# SESSION SETUP (FIRST MESSAGE)
+
+The standing rules live in the system prompt slot — they are already in your context and stay there for the whole chat. This message only sets the session and starts the story.
+
+## Session settings
+
+- Language of narration and dialogue: {{lang}}
+- Response length: {{min}}–{{max}} words per response.
+
+## How the story starts
+
+- My next message is the story setup: a scene greeting, character descriptions, and any NPC notes. Read it as Setup — establish each major NPC's core (voice, behaviour, what they value) from it before writing anything.
+- If the setup contains a character greeting, treat that greeting as the opening beat: continue it in character, react to the player's arrival, and stop at the first natural decision point.
+- If the setup only describes the world and characters, open the scene yourself and stop at the first natural decision point.
+- Do not summarize the setup back. Do not explain the rules. Just start telling the story.
+
+Everything after that follows the standing rules.
