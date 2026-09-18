@@ -277,15 +277,14 @@ footer{padding-bottom:env(safe-area-inset-bottom)}.foot-inner{padding:8px 16px;g
       <div class="tab on" data-tab="text">Текст</div>
       <div class="tab" data-tab="hist" id="histTab">История версий</div>
       <div class="tab" data-tab="cust" id="custTab">Кастомизация</div>
-    </div>
-    <div class="modal-body">
+    </div>      <div class="modal-body">
       <div class="toolbar" id="mToolbar" style="display:none">
         <button class="btn primary" id="mCopy">⧉ Копировать</button>
         <span class="ver-badge" id="mVer"></span>
         <button class="btn ghost" id="mDiff" style="display:none">Дифф с предыдущей</button>         <button class="btn ghost" id="mFb" style="margin-left:auto"><svg class="icon" width="14" height="14"><use href="#i-chat"/></svg> Фидбек</button>
       </div>
       <div class="pair-wrap" id="pairWrap"></div>
-      <div class="textwrap" id="mTextWrap"><pre id="mText"></pre></div>
+      <div class="textwrap" id="mTextWrap"><div class="cust-note">Это правила промта — они уходят в чат целиком. Нужна только часть? Вкладка «Кастомизация»: выключенный блок вырезается при копировании.</div><pre id="mText"></pre></div>
       <div class="cust" id="custWrap"></div>
       <div class="hist" id="mHist" style="display:none"></div>
     </div>
@@ -579,7 +578,8 @@ document.getElementById('grid').addEventListener('click', async e=>{
     }
     return;
   }
-  openModal(p,'text',false);
+  // Plain card click opens the full modal: settings + copy header included.
+  openModal(p,'text',true);
 });
 
 /* ================= LANGUAGE VARIANT / HINT ================= */
@@ -632,7 +632,9 @@ function openModal(p, tab, withSettings){
   const ms=document.getElementById('modalSettings');
   ms.classList.toggle('open', showSettings);
   var langF=document.getElementById('langField');
-  if(langF) langF.style.display=showSettings&&(p.content||'').indexOf('{{lang}}')>=0?'':'none';
+  // Language switch must stay visible whenever settings show: it swaps the
+  // RU twin even for prompts with a hard-coded language (no {{lang}} left).
+  if(langF) langF.style.display=showSettings?'':'none';
   updateLangHint();
   openJbHint();
   const fb=document.getElementById('mFb');
@@ -740,7 +742,8 @@ function switchTab(t){
   document.getElementById('pairWrap').style.display=isText&&isPair?'flex':'none';
   document.getElementById('mHist').style.display=t==='hist'?'flex':'none';
   document.getElementById('custWrap').style.display=isCust?'flex':'none';
-  document.getElementById('mToolbar').style.display=isText&&showSettings?'flex':'none';
+  // Copy header stays visible on every tab (pairs carry their own per-part copy).
+  document.getElementById('mToolbar').style.display=isPair?'none':'flex';
   if(t==='hist') buildHist(cur,curPart);
   if(isCust) buildCust(cur);
 }
