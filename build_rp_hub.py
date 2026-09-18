@@ -59,20 +59,40 @@ OPTION_RE = re.compile(
 OPTIONS_META = {
     "tempo": {
         "label": "Контроль темпа",
-        "description": "Запрет самовольных таймскипов и пересказа («они поели, поговорили, к вечеру пошли домой»). Один момент — сколько угодно ходов, после реплики игрока — реакция и стоп.",
+        "description": "Что это: удерживает темп сцены — время не двигается без причины внутри истории, действия не сжимаются в пересказ, после хода игрока сцена ждёт его ответа.",
     },
     "depth": {
         "label": "Глубина реакций",
-        "description": "Запрет дежурных поверхностных ответов: подтекст, личная заинтересованность, конкретная память персонажа вместо первого очевидного ответа.",
+        "description": "Что это: там, где сцена требует, реакции персонажей получают подтекст, личную заинтересованность и конкретную память вместо первого очевидного ответа; простые моменты остаются простыми.",
     },
     "format": {
         "label": "Чистое форматирование",
-        "description": "Без выделений в прозе, без дробления «Точка. После. Каждого. Слова.», без инородных слов без внутриигровой причины.",
+        "description": "Что это: чистая проза — без выделений и звёздочек, без пословесного дробления точками, без инородных слов без внутриигровой причины.",
     },
     "blood": {
         "label": "Кровь и мясо (§13)",
-        "description": "Жёсткий телесный бой: раны болеют и остаются, без исчезающей крови. Тяжёлый блок — отключи для лёгких или детских сюжетов.",
+        "description": "Что это: жёсткий телесный бой — удары имеют вес, раны болеют и остаются, кровь не исчезает. Тяжёлый блок: отключи для лёгких или детских сюжетов.",
         "advanced": True,
+    },
+    "presummary": {
+        "label": "Скрытая пре-суммари (§7)",
+        "description": "Что это: перед каждым ответом модель в скрытом reasoning проверяет бит сцены, голоса NPC и директивы. Держит голоса и правила стабильными на длинных чатах; на слабых моделях можно отключить ради скорости.",
+    },
+    "rotation": {
+        "label": "Ротация NPC (§8)",
+        "description": "Что это: при нескольких NPC каждый получает внимание каждый ход (или в ротации за три хода) — никто не молчит бесконечно. В дуэтных сценах можно отключить.",
+    },
+    "cliche": {
+        "label": "Анти-клише характеров (§14)",
+        "description": "Что это: банит романтические тропы — «холодный ко всем, кроме тебя», мгновенное исцеление травмы одной репликой, слёзы как единственная эмоция. Кто ролит эти тропы — отключает.",
+    },
+    "ruStyle": {
+        "label": "Русский стиль-оверрайд",
+        "description": "Что это: для русской прозы — запрет дробления «Я здесь. Я рядом. Всегда.», телеграфного стиля, цепочек местоимений, выделений и блэклист русских штампов.",
+    },
+    "setupHelp": {
+        "label": "Помощь с сетапом",
+        "description": "Что это: модель вместо ожидания готового сетапа сама предложит собрать сцену — задаст вопросы про персонажей и мир или поможет составить первый пост.",
     },
 }
 
@@ -146,6 +166,67 @@ def file_at(path, commit):
     return out if rc == 0 else None
 
 
+def build_variant(entry, sys_fname):
+    """Build a language-variant prompt object from an entry override.
+    Mirrors the main build() shape so the template can swap fields freely.
+    sys_fname may be None (single chat file) or a pair's system file."""
+    fname = entry["file"]
+    path = PROMPTS_DIR / fname
+    if not path.exists():
+        return None
+
+    def load_part(part_fname, follow, no_follow_flag):
+        part_rel = PROMPTS_PREFIX + part_fname
+        part_path = PROMPTS_DIR / part_fname
+        if not part_path.exists():
+            return None, [], []
+        raw = part_path.read_text(encoding="utf-8", errors="replace")
+        hist = file_history(part_rel, follow=follow)
+        cutoff = datetime.fromisoformat(RESET_AT) if RESET_AT else None
+        versions = []
+        for v in hist:
+            if cutoff is not None:
+                try:
+                    if datetime.fromisoformat(v["date"]) < cutoff:
+                        continue
+                except ValueError:
+                    pass
+            path_at = v.get("path") or part_rel
+            versions.append({**v, "content": file_at(path_at, v["hash"])})
+        return raw, versions, extract_options(raw)
+
+    nf = entry.get("noFollow", False)
+    nfs = entry.get("noFollowSystem", nf)
+    content, versions, options = load_part(fname, not nf, nf)
+    v = {
+        "file": fname,
+        "kind": "chat",
+        "title": entry.get("title", fname),
+        "description": entry.get("description", ""),
+        "size": len(content),
+        "content": content,
+        "options": options,
+        "versionCount": len(versions),
+    }
+    if sys_fname:
+        sys_raw, sys_versions, sys_options = load_part(sys_fname, not nfs, nfs)
+        if sys_raw is None:
+            return None
+        v["kind"] = "pair"
+        v["fileSystem"] = sys_fname
+        v["contentSystem"] = sys_raw
+        v["sizeSystem"] = len(sys_raw)
+        seen_ids = set()
+        merged = []
+        for o in sys_options + options:
+            if o["id"] not in seen_ids:
+                seen_ids.add(o["id"])
+                merged.append(o)
+        v["options"] = merged
+        v["versionCountSystem"] = len(sys_versions)
+    return v
+
+
 def build():
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     entries = manifest.get("prompts", [])
@@ -198,6 +279,28 @@ def build():
             else datetime.fromtimestamp(path.stat().st_mtime).astimezone().isoformat(),
         }
 
+        # Language variants: twins embedded in the EN card. The card itself
+        # stays English; switching the language select swaps content/options
+        # client-side. Variants carry no history timeline of their own — the
+        # hub shows the EN card's history (twins share the rule text lineage).
+        variants = []
+        for lv in entry.get("langVariants", []):
+            var = build_variant(
+                {
+                    "file": lv["file"],
+                    "title": entry.get("title", fname) + " — " + lv.get("label", "RU"),
+                    "description": entry.get("description", ""),
+                    "noFollow": lv.get("noFollow", entry.get("noFollow", False)),
+                    "noFollowSystem": lv.get("noFollowSystem", entry.get("noFollowSystem", entry.get("noFollow", False))),
+                },
+                lv.get("fileSystem"),
+            )
+            if var is not None:
+                var["lang"] = lv.get("lang", "Russian")
+                variants.append(var)
+        if variants:
+            prompt["langVariants"] = variants
+
         sys_fname = entry.get("fileSystem")
         if sys_fname:
             sys_path = PROMPTS_DIR / sys_fname
@@ -211,8 +314,14 @@ def build():
                 prompt["fileSystem"] = sys_fname
                 prompt["contentSystem"] = sys_raw
                 prompt["sizeSystem"] = len(sys_raw)
-                # Options govern the system part (that is where the rules live).
-                prompt["options"] = sys_options or options
+                # Options govern the whole entry (system + chat share the set).
+                seen_ids = set()
+                merged = []
+                for o in sys_options + options:
+                    if o["id"] not in seen_ids:
+                        seen_ids.add(o["id"])
+                        merged.append(o)
+                prompt["options"] = merged
                 prompt["versionsSystem"] = sys_versions
                 prompt["versionCountSystem"] = len(sys_versions)
                 prompt["updatedSystem"] = (

@@ -266,13 +266,11 @@ footer{padding-bottom:env(safe-area-inset-bottom)}.foot-inner{padding:8px 16px;g
       </div>
       <div class="lang-hint" id="langHint" hidden>
         <svg class="icon" width="15" height="15" style="color:var(--accent);flex-shrink:0"><use href="#i-alert"/></svg>
-        <span style="flex:1;min-width:180px">Для русского РП лучше подходит отдельный промт, оптимизированный именно под русский язык.</span>
-        <button type="button" class="btn primary" id="langHintOpen" style="padding:5px 10px;font-size:12px">Открыть «Стандартный режим (Русский)»</button>
+        <span id="langHintText" style="flex:1;min-width:180px">Русской версии этого промпта нет — язык задаётся в самом промте (селект выше подставит выбранное значение в текст).</span>
       </div>
       <div class="lang-hint" id="jbHint" hidden>
         <svg class="icon" width="15" height="15" style="color:var(--accent);flex-shrink:0"><use href="#i-alert"/></svg>
-        <span style="flex:1;min-width:180px">Есть и русская версия свободного режима — оптимизированная под русский язык.</span>
-        <button type="button" class="btn primary" id="jbHintOpen" style="padding:5px 10px;font-size:12px">Открыть «Свободный режим (Русский)»</button>
+        <span id="jbHintText" style="flex:1;min-width:180px">Русская версия этого промпта встроена — переключение языка уже подставило её выше.</span>
       </div>
     </div>
     <div class="modal-tabs">
@@ -354,7 +352,14 @@ function fillVars(t){
           .replace(/\{\{max\}\}/g, cfg.max);
 }
 document.getElementById('cfgLang').addEventListener('change',e=>{
-  cfg.lang=e.target.value; saveCfg(); refreshModalText(); updateLangHint(); openJbHint();
+  cfg.lang=e.target.value; saveCfg();
+  if(cur && overlay.classList.contains('open')){
+    let target=cur;
+    if(cur.lang && cfg.lang!=='Russian'){ target=PROMPTS.find(x=>x.file===cur.parentFile)||cur; }
+    else if(!cur.lang){ const hit=(cur.langVariants||[]).find(v=>v.lang===cfg.lang); if(hit){ hit.parentFile=cur.file; target=hit; } }
+    openModal(target,'text',showSettings);
+  }
+  refreshModalText(); updateLangHint(); openJbHint();
 });
 function setLen(min,max){
   cfg.min=min; cfg.max=max;
@@ -447,7 +452,7 @@ function buildCust(p){
       row.classList.toggle('on',optOn[id]!==false);
       row.setAttribute('aria-checked',optOn[id]!==false?'true':'false');
       refreshModalText();
-      if(cur&&cur.kind==='pair') renderPart(cur,'system');
+      if(cur&&cur.kind==='pair') renderPart(cur,'chat');
     };
     row.addEventListener('click',toggle);
     row.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); } });
@@ -577,19 +582,22 @@ document.getElementById('grid').addEventListener('click', async e=>{
   openModal(p,'text',false);
 });
 
-/* ================= LANGUAGE HINT ================= */
+/* ================= LANGUAGE VARIANT / HINT ================= */
+function useVariantIfAvailable(){
+  if(!cur || cur.lang) return cur;
+  const vs=(cur.langVariants||[]);
+  for(const v of vs){ if(v.lang===cfg.lang) return v; }
+  return cur;
+}
 function updateLangHint(){
   const hint=document.getElementById('langHint');
   if(!hint) return;
   const hasLangVar=!!cur && (cur.content||'').includes('{{lang}}');
-  hint.hidden=!(showSettings && cfg.lang==='Russian' && hasLangVar);
+  const hasTwin=!!cur && (cur.langVariants||[]).some(v=>v.lang==='Russian');
+  // With twins embedded the switch substitutes content itself; the hint only
+  // remains for prompts that have {{lang}} but NO Russian twin.
+  hint.hidden=!(showSettings && cfg.lang==='Russian' && hasLangVar && !hasTwin);
 }
-document.getElementById('langHintOpen').addEventListener('click',()=>{
-  const p=PROMPTS.find(x=>x.file==='rp-character-lock-ru.txt');
-  if(!p) return;
-  overlay.classList.remove('open');
-  openModal(p,'text',true);
-});
 
 /* ================= MODAL ================= */
 let cur=null, curVersion=null, curPart='chat', diffOn=false, showSettings=false;
@@ -599,16 +607,13 @@ function openJbHint(){
   const hint=document.getElementById('jbHint');
   if(!hint) return;
   const hasLangVar=!!cur && (cur.content||'').includes('{{lang}}');
-  hint.hidden=!(showSettings && cfg.lang==='Russian' && hasLangVar);
+  const hasTwin=!!cur && (cur.langVariants||[]).some(v=>v.lang==='Russian');
+  // Retired unless a jb-card without a Russian twin ever appears.
+  hint.hidden=!(showSettings && cfg.lang==='Russian' && hasLangVar && !hasTwin && !!cur.jb);
 }
-document.getElementById('jbHintOpen').addEventListener('click',()=>{
-  const p=PROMPTS.find(x=>x.file==='rp-uncensored-ru.txt');
-  if(!p) return;
-  overlay.classList.remove('open');
-  openModal(p,'text',true);
-});
 
 function openModal(p, tab, withSettings){
+  if(!p.lang){ const vs=(p.langVariants||[]); for(const v of vs){ if(v.lang===cfg.lang){ v.parentFile=p.file; p=v; break; } } }
   cur=p; curVersion=null; curPart='chat'; diffOn=false; showSettings=!!withSettings && p.kind!=='pair';
   const isPair=p.kind==='pair';
   document.getElementById('mTitle').textContent=p.title||'';
@@ -669,7 +674,7 @@ function renderPart(p,part){
   const el=document.getElementById(part==='system'?'mTextSys':'mTextChat');
   if(!el) return;
   const src=part==='system'?(p.contentSystem||''):(p.content||'');
-  el.textContent=part==='system'?applyOptions(fillVars(src)):fillVars(src);
+  el.textContent=applyOptions(fillVars(src));
 }
 function refreshModalText(){
   if(!cur) return;
